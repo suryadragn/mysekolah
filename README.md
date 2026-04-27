@@ -8,6 +8,13 @@
 
 ---
 
+## 🌐 Live Demo
+
+Lihat langsung aplikasi yang sudah online (Live Demo):
+**👉 [mysekolah.suryaisme.my.id](http://mysekolah.suryaisme.my.id)**
+
+---
+
 ## ✨ Fitur Utama
 
 - **Dashboard Admin Modern** — Statistik real-time dengan desain Glassmorphism premium.
