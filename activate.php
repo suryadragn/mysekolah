@@ -29,7 +29,8 @@ $appStatus = $globalSettings['app_status'] ?? 'inactive';
 $trialStartedAt = $globalSettings['trial_started_at'] ?? '';
 
 // Already fully active
-if ($appStatus === 'active') {
+$appLicenseKey = $globalSettings['app_license_key'] ?? '';
+if ($appStatus === 'active' && $appLicenseKey === $validKey) {
     redirect('index.php');
 }
 
@@ -44,6 +45,9 @@ if ($appStatus === 'trial' && !empty($trialStartedAt)) {
 }
 
 $error = '';
+if ($appStatus === 'active' && $appLicenseKey !== $validKey && $appLicenseKey !== '') {
+    $error = "Sistem mendeteksi License Key tidak valid untuk domain ini. Silakan masukkan key yang benar.";
+}
 
 // Handle full activation
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['activate'])) {
