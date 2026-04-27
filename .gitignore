@@ -1,4 +1,5 @@
 .env
+keygen.php
 /uploads/*
 !/uploads/.gitkeep
 node_modules/

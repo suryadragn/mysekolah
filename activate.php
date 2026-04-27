@@ -2,41 +2,59 @@
 require_once 'admin/db.php';
 
 $appName = $_ENV['APP_NAME'] ?? 'MySekolah';
-$masterKey = $_ENV['MASTER_LICENSE_KEY'] ?? '';
 $trialDays = 14;
+
+// --- SECRET SALT (Jangan pernah ubah ini setelah distribusi!) ---
+// Salt ini adalah rahasia mutlak Anda. Jangan share ke siapapun.
+define('LICENSE_SALT', 'SURYADRAGN-SECRET-2026-!@#XQZP');
+
+// --- Generate key berdasarkan domain ---
+function generateLicenseKey($domain) {
+    $clean = strtolower(preg_replace('/^www\./', '', $domain));
+    return strtoupper(substr(hash('sha256', $clean . LICENSE_SALT), 0, 8) . '-' .
+           substr(hash('sha256', LICENSE_SALT . $clean), 8, 8) . '-' .
+           substr(hash('sha256', $clean . $clean . LICENSE_SALT), 16, 8));
+}
+
+// --- Get current domain ---
+function getCurrentDomain() {
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    return strtolower(preg_replace('/^www\./', '', explode(':', $host)[0]));
+}
+
+$currentDomain = getCurrentDomain();
+$validKey = generateLicenseKey($currentDomain);
 
 $appStatus = $globalSettings['app_status'] ?? 'inactive';
 $trialStartedAt = $globalSettings['trial_started_at'] ?? '';
 
-// Check if already fully active
+// Already fully active
 if ($appStatus === 'active') {
     redirect('index.php');
 }
 
-// Check if trial is still valid
+// Trial still valid
 if ($appStatus === 'trial' && !empty($trialStartedAt)) {
     $trialStart = new DateTime($trialStartedAt);
     $now = new DateTime();
     $daysUsed = $now->diff($trialStart)->days;
     if ($daysUsed < $trialDays) {
-        redirect('index.php'); // still valid, let them in
+        redirect('index.php');
     }
-    // trial expired — fall through to activation page
 }
 
 $error = '';
-$info = '';
 
 // Handle full activation
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['activate'])) {
-    $inputKey = $_POST['license_key'] ?? '';
+    $inputKey = strtoupper(trim($_POST['license_key'] ?? ''));
 
-    if (!empty($masterKey) && $inputKey === $masterKey) {
+    if ($inputKey === $validKey) {
         $pdo->exec("UPDATE ms_settings SET s_value = 'active' WHERE s_key = 'app_status'");
         $pdo->prepare("UPDATE ms_settings SET s_value = ? WHERE s_key = 'app_license_key'")->execute([$inputKey]);
         redirect('index.php');
     } else {
-        $error = "License key tidak valid. Silakan hubungi author untuk mendapatkan key resmi.";
+        $error = "License key tidak valid untuk domain <strong>{$currentDomain}</strong>. Pastikan Anda meminta key ke author sesuai domain Anda.";
     }
 }
 
@@ -48,7 +66,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['start_trial'])) {
     redirect('index.php');
 }
 
-// Calculate days left if trial expired
 $trialExpiredMsg = '';
 if ($appStatus === 'trial' && !empty($trialStartedAt)) {
     $trialExpiredMsg = "Masa trial Anda telah berakhir. Silakan masukkan License Key untuk melanjutkan.";
@@ -99,6 +116,8 @@ if ($appStatus === 'trial' && !empty($trialStartedAt)) {
             color: white;
             font-size: 1rem;
             box-sizing: border-box;
+            font-family: monospace;
+            letter-spacing: 1px;
         }
         input:focus {
             border-color: var(--primary);
@@ -133,6 +152,16 @@ if ($appStatus === 'trial' && !empty($trialStartedAt)) {
             border: 1px solid rgba(99, 102, 241, 0.25);
             border-radius: 16px;
             padding: 1.5rem;
+        }
+        .domain-chip {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 0.4rem 0.9rem;
+            font-size: 0.85rem;
+            color: var(--secondary);
+            font-family: monospace;
+            display: inline-block;
             margin-bottom: 1.5rem;
         }
     </style>
@@ -142,11 +171,12 @@ if ($appStatus === 'trial' && !empty($trialStartedAt)) {
     <div class="bg-blob blob-2"></div>
 
     <div class="activation-card">
-        <div style="font-size: 3rem; margin-bottom: 1rem;">🔑</div>
+        <div style="font-size: 3rem; margin-bottom: 1rem;">🔐</div>
         <h1 style="margin-bottom: 0.5rem; color: var(--secondary);">Aktivasi Sistem</h1>
-        <p style="color: var(--text-muted); margin-bottom: 2rem; font-size: 0.95rem;">
+        <p style="color: var(--text-muted); margin-bottom: 0.75rem; font-size: 0.95rem;">
             Aplikasi ini dilindungi lisensi oleh <strong>suryadragn</strong>.
         </p>
+        <div class="domain-chip">🌐 <?php echo $currentDomain; ?></div>
 
         <?php if ($error): ?>
             <div class="error-msg"><?php echo $error; ?></div>
@@ -156,27 +186,25 @@ if ($appStatus === 'trial' && !empty($trialStartedAt)) {
             <div class="error-msg"><?php echo $trialExpiredMsg; ?></div>
         <?php endif; ?>
 
-        <!-- License Key Form -->
         <form action="" method="POST">
             <div class="form-group">
-                <label>Masukkan License Key</label>
-                <input type="text" name="license_key" placeholder="Contoh: MYSEKOLAH-PRO-XXXX">
+                <label>Masukkan License Key untuk domain ini</label>
+                <input type="text" name="license_key" placeholder="XXXXXXXX-XXXXXXXX-XXXXXXXX">
             </div>
             <button type="submit" name="activate" class="btn btn-primary" style="width: 100%; padding: 1.1rem;">
                 ✅ Aktivasi Penuh
             </button>
         </form>
 
-        <?php if (empty($trialStartedAt)): // Only show trial button if never tried before ?>
+        <?php if (empty($trialStartedAt)): ?>
         <div class="divider">atau</div>
-
         <div class="trial-box">
             <p style="margin: 0 0 0.5rem 0; font-weight: 600;">Coba Gratis <?php echo $trialDays; ?> Hari</p>
             <p style="margin: 0 0 1rem 0; color: var(--text-muted); font-size: 0.85rem;">
-                Akses semua fitur tanpa batasan selama <?php echo $trialDays; ?> hari. Tidak perlu key.
+                Akses semua fitur tanpa batasan selama <?php echo $trialDays; ?> hari.
             </p>
             <form action="" method="POST">
-                <button type="submit" name="start_trial" class="btn btn-glass" style="width: 100%; padding: 1.1rem;">
+                <button type="submit" name="start_trial" class="btn btn-glass" style="width: 100%; padding: 1rem;">
                     🚀 Mulai Trial <?php echo $trialDays; ?> Hari
                 </button>
             </form>
@@ -184,8 +212,7 @@ if ($appStatus === 'trial' && !empty($trialStartedAt)) {
         <?php endif; ?>
 
         <p style="margin-top: 1.5rem; font-size: 0.85rem; color: var(--text-muted);">
-            Ingin lisensi penuh? Hubungi
-            <a href="https://github.com/suryadragn" target="_blank" style="color: var(--accent);">suryadragn</a>
+            Minta license key ke: <a href="https://github.com/suryadragn" target="_blank" style="color: var(--accent);">github.com/suryadragn</a>
         </p>
     </div>
 </body>
