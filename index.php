@@ -66,10 +66,17 @@ try {
 // --- License Check (independent dari db.php) ---
 define('LICENSE_SALT', 'SURYADRAGN-SECRET-2026-!@#XQZP');
 $_appStatus = $settings['app_status'] ?? 'inactive';
+$_appLicenseKey = $settings['app_license_key'] ?? '';
 $_trialStartedAt = $settings['trial_started_at'] ?? '';
 $_trialDays = 14;
 $_isAllowed = false;
-if ($_appStatus === 'active') {
+
+$_currentDomain = strtolower(preg_replace('/^www\./', '', explode(':', $_SERVER['HTTP_HOST'] ?? 'localhost')[0]));
+$_validKey = strtoupper(substr(hash('sha256', $_currentDomain . LICENSE_SALT), 0, 8) . '-' .
+       substr(hash('sha256', LICENSE_SALT . $_currentDomain), 8, 8) . '-' .
+       substr(hash('sha256', $_currentDomain . $_currentDomain . LICENSE_SALT), 16, 8));
+
+if ($_appStatus === 'active' && $_appLicenseKey === $_validKey) {
     $_isAllowed = true;
 } elseif ($_appStatus === 'trial' && !empty($_trialStartedAt)) {
     $trialStart = new DateTime($_trialStartedAt);

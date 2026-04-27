@@ -59,11 +59,19 @@ try {
 $currentFile = basename($_SERVER['PHP_SELF']);
 if ($currentFile !== 'activate.php') {
     $appStatus = $globalSettings['app_status'] ?? 'inactive';
+    $appLicenseKey = $globalSettings['app_license_key'] ?? '';
     $trialStartedAt = $globalSettings['trial_started_at'] ?? '';
     $trialDays = 14;
     $isAllowed = false;
 
-    if ($appStatus === 'active') {
+    // Strong License Validation
+    define('DB_LICENSE_SALT', 'SURYADRAGN-SECRET-2026-!@#XQZP');
+    $currentDomain = strtolower(preg_replace('/^www\./', '', explode(':', $_SERVER['HTTP_HOST'] ?? 'localhost')[0]));
+    $validKey = strtoupper(substr(hash('sha256', $currentDomain . DB_LICENSE_SALT), 0, 8) . '-' .
+               substr(hash('sha256', DB_LICENSE_SALT . $currentDomain), 8, 8) . '-' .
+               substr(hash('sha256', $currentDomain . $currentDomain . DB_LICENSE_SALT), 16, 8));
+
+    if ($appStatus === 'active' && $appLicenseKey === $validKey) {
         $isAllowed = true;
     } elseif ($appStatus === 'trial' && !empty($trialStartedAt)) {
         $trialStart = new DateTime($trialStartedAt);
