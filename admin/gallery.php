@@ -1,0 +1,116 @@
+<?php
+require_once 'db.php';
+if (!isLoggedIn()) redirect('login.php');
+
+$appName = $_ENV['APP_NAME'] ?? 'MySekolah';
+
+// Handle Add
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_photo'])) {
+    $title = $_POST['title'];
+    $image = $_FILES['image'];
+    
+    if ($image['name']) {
+        $ext = pathinfo($image['name'], PATHINFO_EXTENSION);
+        $filename = time() . '_' . uniqid() . '.' . $ext;
+        move_uploaded_file($image['tmp_name'], '../uploads/' . $filename);
+        
+        $stmt = $pdo->prepare("INSERT INTO ms_gallery (title, image) VALUES (?, ?)");
+        $stmt->execute([$title, $filename]);
+        $success = "Foto berhasil ditambahkan!";
+    }
+}
+
+// Handle Delete
+if (isset($_GET['delete'])) {
+    $id = $_GET['delete'];
+    
+    // Delete file
+    $stmt = $pdo->prepare("SELECT image FROM ms_gallery WHERE id = ?");
+    $stmt->execute([$id]);
+    $img = $stmt->fetchColumn();
+    if ($img && file_exists('../uploads/' . $img)) {
+        unlink('../uploads/' . $img);
+    }
+    
+    $stmt = $pdo->prepare("DELETE FROM ms_gallery WHERE id = ?");
+    $stmt->execute([$id]);
+    redirect('gallery.php');
+}
+
+// Fetch Gallery
+$gallery = $pdo->query("SELECT * FROM ms_gallery ORDER BY created_at DESC")->fetchAll();
+?>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelola Galeri | <?php echo $appName; ?></title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <style>
+        :root { --sidebar-width: 280px; }
+        body { display: flex; min-height: 100vh; background: #050810; }
+        aside { width: var(--sidebar-width); background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border-right: 1px solid var(--glass-border); padding: 2rem; display: flex; flex-direction: column; position: fixed; height: 100vh; overflow-y: auto; }
+        aside::-webkit-scrollbar { display: none; }
+        aside { -ms-overflow-style: none; scrollbar-width: none; }
+        .admin-nav { margin-top: 3rem; display: flex; flex-direction: column; gap: 0.5rem; }
+        .admin-nav-item { padding: 1rem 1.5rem; border-radius: 12px; color: var(--text-muted); text-decoration: none; transition: 0.3s; display: flex; align-items: center; gap: 12px; }
+        .admin-nav-item:hover, .admin-nav-item.active { background: var(--glass); color: var(--secondary); border: 1px solid var(--glass-border); }
+        main { margin-left: var(--sidebar-width); flex: 1; padding: 3rem; }
+        
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+        .gallery-item { background: var(--glass); border-radius: 15px; border: 1px solid var(--glass-border); overflow: hidden; position: relative; }
+        .gallery-item img { width: 100%; aspect-ratio: 1; object-fit: cover; }
+        .gallery-item .overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transition: 0.3s; padding: 1rem; text-align: center; }
+        .gallery-item:hover .overlay { opacity: 1; }
+        
+        .form-card { background: var(--glass); padding: 2rem; border-radius: 20px; border: 1px solid var(--glass-border); margin-bottom: 2rem; }
+        input, button { width: 100%; margin-bottom: 1rem; }
+    </style>
+</head>
+<body>
+    <?php 
+    $page = 'gallery';
+    require 'layout/sidebar.php'; 
+    ?>
+
+    <main>
+        <h1 style="margin-bottom: 2rem;">Kelola Galeri Foto</h1>
+        
+        <?php if (isset($success)): ?>
+            <div style="background: rgba(34, 197, 94, 0.1); color: #22c55e; padding: 1rem; border-radius: 10px; margin-bottom: 2rem; border: 1px solid rgba(34, 197, 94, 0.2);">
+                <?php echo $success; ?>
+            </div>
+        <?php endif; ?>
+
+        <div class="form-card">
+            <h3 style="margin-bottom: 1.5rem;">Tambah Foto Baru</h3>
+            <form action="" method="POST" enctype="multipart/form-data" style="display: flex; gap: 1rem; align-items: flex-start;">
+                <div style="flex: 1;">
+                    <input type="text" name="title" placeholder="Judul Foto" required style="padding: 1rem; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: white; border-radius: 10px; width: 100%;">
+                </div>
+                <div style="flex: 1;">
+                    <input type="file" name="image" required style="padding: 0.8rem; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: white; border-radius: 10px; width: 100%;">
+                </div>
+                <button type="submit" name="add_photo" class="btn btn-primary" style="width: auto; padding: 1rem 2rem;">Upload</button>
+            </form>
+        </div>
+
+        <div class="gallery-grid">
+            <?php foreach ($gallery as $item): ?>
+            <div class="gallery-item">
+                <img src="../uploads/<?php echo $item['image']; ?>" alt="<?php echo $item['title']; ?>">
+                <div class="overlay">
+                    <p style="font-weight: 600; margin-bottom: 1rem;"><?php echo $item['title']; ?></p>
+                    <a href="gallery.php?delete=<?php echo $item['id']; ?>" class="btn btn-glass" style="color: var(--accent); font-size: 0.8rem;" onclick="return confirm('Hapus foto ini?')">Hapus</a>
+                </div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+        
+        <?php if (empty($gallery)): ?>
+            <div style="text-align: center; color: var(--text-muted); padding: 5rem;">Belum ada koleksi foto.</div>
+        <?php endif; ?>
+    </main>
+</body>
+</html>
