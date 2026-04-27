@@ -54,4 +54,14 @@ try {
 } catch (PDOException $e) {
     // Ignore if table doesn't exist yet
 }
+
+// License Activation Check
+$currentFile = basename($_SERVER['PHP_SELF']);
+if ($currentFile !== 'activate.php') {
+    if (!isset($globalSettings['app_status']) || $globalSettings['app_status'] !== 'active') {
+        $baseDir = dirname($_SERVER['PHP_SELF']);
+        $prefix = (basename($baseDir) === 'admin') ? '../' : '';
+        redirect($prefix . 'activate.php');
+    }
+}
 ?>
