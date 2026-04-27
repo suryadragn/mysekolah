@@ -58,7 +58,24 @@ try {
 // License Activation Check
 $currentFile = basename($_SERVER['PHP_SELF']);
 if ($currentFile !== 'activate.php') {
-    if (!isset($globalSettings['app_status']) || $globalSettings['app_status'] !== 'active') {
+    $appStatus = $globalSettings['app_status'] ?? 'inactive';
+    $trialStartedAt = $globalSettings['trial_started_at'] ?? '';
+    $trialDays = 14;
+    $isAllowed = false;
+
+    if ($appStatus === 'active') {
+        $isAllowed = true;
+    } elseif ($appStatus === 'trial' && !empty($trialStartedAt)) {
+        $trialStart = new DateTime($trialStartedAt);
+        $now = new DateTime();
+        $daysUsed = $now->diff($trialStart)->days;
+        if ($daysUsed < $trialDays) {
+            $isAllowed = true;
+            $GLOBALS['trialDaysLeft'] = $trialDays - $daysUsed;
+        }
+    }
+
+    if (!$isAllowed) {
         $baseDir = dirname($_SERVER['PHP_SELF']);
         $prefix = (basename($baseDir) === 'admin') ? '../' : '';
         redirect($prefix . 'activate.php');

@@ -81,6 +81,12 @@ try {
     <div class="bg-blob blob-1"></div>
     <div class="bg-blob blob-2"></div>
 
+    <?php if (isset($GLOBALS['trialDaysLeft'])): ?>
+    <div style="background: linear-gradient(90deg, #7c3aed, #4f46e5); color: white; text-align: center; padding: 0.7rem 1rem; font-size: 0.9rem; position: sticky; top: 0; z-index: 9999;">
+        ⏳ Mode Trial — <strong><?php echo $GLOBALS['trialDaysLeft']; ?> hari tersisa</strong>. Untuk aktivasi penuh, hubungi <a href="https://github.com/suryadragn" target="_blank" style="color: #c4b5fd; font-weight: bold;">suryadragn</a>.
+    </div>
+    <?php endif; ?>
+
     <nav>
         <div class="logo">
             <a href="#home" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 10px;">
