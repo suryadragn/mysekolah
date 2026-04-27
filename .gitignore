@@ -5,4 +5,3 @@ database_structure.sql
 !/uploads/.gitkeep
 node_modules/
 .DS_Store
-database.sql
