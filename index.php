@@ -62,6 +62,27 @@ $socials = [];
 try {
     $socials = $pdo_init->query("SELECT * FROM ms_socials ORDER BY id ASC")->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {}
+
+// --- License Check (independent dari db.php) ---
+define('LICENSE_SALT', 'SURYADRAGN-SECRET-2026-!@#XQZP');
+$_appStatus = $settings['app_status'] ?? 'inactive';
+$_trialStartedAt = $settings['trial_started_at'] ?? '';
+$_trialDays = 14;
+$_isAllowed = false;
+if ($_appStatus === 'active') {
+    $_isAllowed = true;
+} elseif ($_appStatus === 'trial' && !empty($_trialStartedAt)) {
+    $trialStart = new DateTime($_trialStartedAt);
+    $daysUsed = (new DateTime())->diff($trialStart)->days;
+    if ($daysUsed < $_trialDays) {
+        $_isAllowed = true;
+        $GLOBALS['trialDaysLeft'] = $_trialDays - $daysUsed;
+    }
+}
+if (!$_isAllowed) {
+    header('Location: activate.php');
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">

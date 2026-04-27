@@ -1,5 +1,6 @@
 .env
 keygen.php
+database_structure.sql
 /uploads/*
 !/uploads/.gitkeep
 node_modules/
