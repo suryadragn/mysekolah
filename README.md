@@ -34,7 +34,7 @@ Aplikasi ini menggunakan sistem **Domain-Bound License**. Setiap License Key han
 | Platform | Link |
 |---|---|
 | 🐙 GitHub | [github.com/suryadragn](https://github.com/suryadragn) |
-| 📧 Email | suryadragn@gmail.com |
+| 📧 Email | adhisurya05@gmail.com |
 
 > **Catatan:** License Key bersifat permanen untuk satu domain. Jika domain berubah, diperlukan License Key baru.
 
@@ -62,7 +62,7 @@ Lalu sesuaikan isinya:
 ```env
 APP_NAME="Nama Sekolah Anda"
 DB_HOST=127.0.0.1
-DB_PORT=3307
+DB_PORT=3306
 DB_NAME=mysekolah
 DB_USER=root
 DB_PASS=
