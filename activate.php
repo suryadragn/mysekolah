@@ -168,6 +168,10 @@ if ($appStatus === 'trial' && !empty($trialStartedAt)) {
             display: inline-block;
             margin-bottom: 1.5rem;
         }
+        @media (max-width: 480px) {
+            .activation-card { padding: 1.5rem; margin: 1rem; }
+            h1 { font-size: 1.5rem; }
+        }
     </style>
 </head>
 <body>
