@@ -46,7 +46,7 @@ $gallery = $pdo->query("SELECT * FROM ms_gallery ORDER BY created_at DESC")->fet
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kelola Galeri | <?php echo $appName; ?></title>
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/style.css?v=<?php echo time(); ?>">
     <style>
         .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
         .gallery-item { background: var(--glass); border-radius: 15px; border: 1px solid var(--glass-border); overflow: hidden; position: relative; }

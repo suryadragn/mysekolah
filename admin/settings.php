@@ -54,7 +54,7 @@ foreach ($settings_raw as $s) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pengaturan Umum | <?php echo $appName; ?></title>
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/style.css?v=<?php echo time(); ?>">
 </head>
 <body class="admin-body">
     <div class="mobile-admin-header">

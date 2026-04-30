@@ -52,7 +52,7 @@ $socials = $pdo->query("SELECT * FROM ms_socials ORDER BY id ASC")->fetchAll();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kelola Sosial Media | <?php echo $appName; ?></title>
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/style.css?v=<?php echo time(); ?>">
     <style>
         .form-card { background: var(--glass); padding: 2rem; border-radius: 20px; border: 1px solid var(--glass-border); margin-bottom: 3rem; }
         .form-group { margin-bottom: 1.5rem; }
