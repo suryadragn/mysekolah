@@ -343,7 +343,9 @@ if (!$_isAllowed) {
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
                 e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                const target = document.querySelector(targetId);
                 if (target) {
                     target.scrollIntoView({
                         behavior: 'smooth'
@@ -351,51 +353,45 @@ if (!$_isAllowed) {
                 }
             });
         });
-    </script>
-    <script>
-        // Mobile Nav Toggle
+
+        // Mobile Nav Toggle & Scroll Effect
         const navToggle = document.getElementById('navToggle');
         const navLinks = document.getElementById('navLinks');
+        const nav = document.querySelector('nav');
         
-        navToggle.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-            navToggle.textContent = navLinks.classList.contains('active') ? '✕' : '☰';
-        });
-
-        // Close menu when clicking link
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
-                navLinks.classList.remove('active');
-                navToggle.textContent = '☰';
-            });
-        });
-
-        // Sticky Nav Blur on Scroll
-        window.addEventListener('scroll', () => {
-            const nav = document.querySelector('nav');
-            if (window.scrollY > 50) {
-                nav.style.background = 'rgba(15, 23, 42, 0.95)';
-            } else {
-                nav.style.background = 'rgba(15, 23, 42, 0.8)';
-            }
-        });
-    </script>
-    <script>
-        const navToggle = document.getElementById('navToggle');
-        const navLinks = document.getElementById('navLinks');
-        
-        if(navToggle) {
-            navToggle.addEventListener('click', () => {
+        if (navToggle && navLinks) {
+            navToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
                 navLinks.classList.toggle('active');
                 navToggle.textContent = navLinks.classList.contains('active') ? '✕' : '☰';
             });
+
+            // Close menu when clicking link
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.addEventListener('click', () => {
+                    navLinks.classList.remove('active');
+                    navToggle.textContent = '☰';
+                });
+            });
+
+            // Close menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!nav.contains(e.target) && navLinks.classList.contains('active')) {
+                    navLinks.classList.remove('active');
+                    navToggle.textContent = '☰';
+                }
+            });
         }
 
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
-                navLinks.classList.remove('active');
-                if(navToggle) navToggle.textContent = '☰';
-            });
+        // Sticky Nav Blur on Scroll
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                nav.style.background = 'rgba(15, 23, 42, 0.95)';
+                nav.style.padding = '1rem 5%';
+            } else {
+                nav.style.background = 'rgba(15, 23, 42, 0.8)';
+                nav.style.padding = '1.5rem 5%';
+            }
         });
     </script>
 </body>

@@ -60,11 +60,19 @@ nav {
 
 .nav-toggle {
     display: none;
-    font-size: 1.5rem;
-    background: none;
-    border: none;
+    font-size: 1.8rem;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
     color: white;
     cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 8px;
+    line-height: 1;
+    transition: 0.3s;
+}
+
+.nav-toggle:hover {
+    background: rgba(255,255,255,0.1);
 }
 
 .nav-links {
@@ -285,11 +293,22 @@ footer li a:hover {
     .hero p { font-size: 1rem; }
     
     .cta-group { flex-direction: column; width: 100%; max-width: 300px; }
-    .btn { text-align: center; }
+    .btn { text-align: center; white-space: normal; height: auto; padding: 1rem 1.5rem; }
     
     .stats { grid-template-columns: 1fr 1fr; gap: 1rem; padding: 3rem 5%; }
-    .stat-card { padding: 1.5rem; }
+    .stat-card { padding: 1.5rem; overflow: visible; }
     .stat-card h3 { font-size: 2rem; }
+    
+    #admission .stat-card { padding: 3rem 1.5rem !important; }
+    #admission h2 { font-size: 1.8rem !important; margin-bottom: 1rem !important; }
+    #admission .btn { 
+        width: 100%; 
+        padding: 1.2rem; 
+        border-radius: 16px; 
+        display: flex; 
+        font-size: 1rem;
+        line-height: 1.4;
+    }
     
     section { padding: 3rem 5% !important; }
     section h2 { font-size: 2rem !important; }
