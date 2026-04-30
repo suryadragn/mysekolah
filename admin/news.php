@@ -40,13 +40,18 @@ $news = $pdo->query("SELECT * FROM ms_news ORDER BY created_at DESC")->fetchAll(
         .btn-danger { background: rgba(244, 63, 94, 0.1); color: var(--accent); }
     </style>
 </head>
-<body>
+<body class="admin-body">
+    <div class="mobile-admin-header">
+        <button id="openSidebar" style="background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer;">☰</button>
+        <div style="font-weight: 800; font-size: 1.1rem;"><?php echo strtoupper($appName); ?></div>
+    </div>
+
     <?php 
     $page = 'news';
     require 'layout/sidebar.php'; 
     ?>
 
-    <main>
+    <main class="admin-main">
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <h1 style="font-size: 2rem;">Kelola Berita</h1>
             <a href="news_add.php" class="btn btn-primary">+ Tambah Berita</a>
@@ -79,5 +84,29 @@ $news = $pdo->query("SELECT * FROM ms_news ORDER BY created_at DESC")->fetchAll(
             </table>
         </div>
     </main>
+
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const openSidebar = document.getElementById('openSidebar');
+        const closeSidebar = document.getElementById('closeSidebar');
+
+        if (openSidebar) {
+            openSidebar.addEventListener('click', () => sidebar.classList.add('active'));
+        }
+        if (closeSidebar) {
+            closeSidebar.addEventListener('click', () => sidebar.classList.remove('active'));
+        }
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 992) {
+                sidebar.classList.remove('active');
+                if(closeSidebar) closeSidebar.style.display = 'none';
+            } else {
+                if(closeSidebar) closeSidebar.style.display = 'block';
+            }
+        });
+        
+        if (window.innerWidth <= 992 && closeSidebar) closeSidebar.style.display = 'block';
+    </script>
 </body>
 </html>

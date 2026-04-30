@@ -124,15 +124,17 @@ if (!$_isAllowed) {
                 <?php echo strtoupper($appName); ?>
             </a>
         </div>
-        <ul class="nav-links">
+        <button class="nav-toggle" id="navToggle">☰</button>
+        <ul class="nav-links" id="navLinks">
             <li><a href="#home">Beranda</a></li>
             <li><a href="#about">Tentang</a></li>
             <li><a href="#news">Berita</a></li>
             <li><a href="#gallery">Galeri</a></li>
             <li><a href="#admission">PPDB</a></li>
             <li><a href="#contact">Kontak</a></li>
+            <li class="mobile-only"><a href="admin/login.php" class="btn btn-primary" style="padding: 0.5rem 1.5rem; display: block;">Masuk</a></li>
         </ul>
-        <a href="admin/login.php" class="btn btn-glass" style="padding: 0.5rem 1.5rem;">Masuk</a>
+        <a href="admin/login.php" class="btn btn-glass desktop-only" style="padding: 0.5rem 1.5rem;">Masuk</a>
     </nav>
 
     <section class="hero" id="home" <?php if(!empty($settings['hero_bg'])) echo 'style="background: linear-gradient(rgba(5, 8, 16, 0.8), rgba(5, 8, 16, 0.95)), url(\'uploads/' . $settings['hero_bg'] . '\') center/cover no-repeat;"'; ?>>
@@ -347,6 +349,52 @@ if (!$_isAllowed) {
                         behavior: 'smooth'
                     });
                 }
+            });
+        });
+    </script>
+    <script>
+        // Mobile Nav Toggle
+        const navToggle = document.getElementById('navToggle');
+        const navLinks = document.getElementById('navLinks');
+        
+        navToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            navToggle.textContent = navLinks.classList.contains('active') ? '✕' : '☰';
+        });
+
+        // Close menu when clicking link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                navToggle.textContent = '☰';
+            });
+        });
+
+        // Sticky Nav Blur on Scroll
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.style.background = 'rgba(15, 23, 42, 0.95)';
+            } else {
+                nav.style.background = 'rgba(15, 23, 42, 0.8)';
+            }
+        });
+    </script>
+    <script>
+        const navToggle = document.getElementById('navToggle');
+        const navLinks = document.getElementById('navLinks');
+        
+        if(navToggle) {
+            navToggle.addEventListener('click', () => {
+                navLinks.classList.toggle('active');
+                navToggle.textContent = navLinks.classList.contains('active') ? '✕' : '☰';
+            });
+        }
+
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                if(navToggle) navToggle.textContent = '☰';
             });
         });
     </script>

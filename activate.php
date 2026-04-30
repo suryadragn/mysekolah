@@ -89,88 +89,115 @@ if ($appStatus === 'trial' && !empty($trialStartedAt)) {
             justify-content: center;
             min-height: 100vh;
             background: #050810;
+            overflow: hidden;
         }
         .activation-card {
-            background: var(--glass);
-            padding: 3rem;
-            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 3.5rem;
+            border-radius: 32px;
             border: 1px solid var(--glass-border);
             width: 100%;
-            max-width: 520px;
+            max-width: 550px;
             text-align: center;
-            backdrop-filter: blur(20px);
+            backdrop-filter: blur(40px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: fadeInScale 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
         }
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
             text-align: left;
         }
         label {
             display: block;
-            margin-bottom: 0.8rem;
+            margin-bottom: 1rem;
             color: var(--text-muted);
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         input {
             width: 100%;
-            padding: 1.2rem;
-            background: rgba(255,255,255,0.05);
+            padding: 1.4rem;
+            background: rgba(255,255,255,0.03);
             border: 1px solid var(--glass-border);
-            border-radius: 12px;
+            border-radius: 16px;
             color: white;
-            font-size: 1rem;
+            font-size: 1.1rem;
             box-sizing: border-box;
-            font-family: monospace;
-            letter-spacing: 1px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            letter-spacing: 2px;
+            text-align: center;
+            transition: all 0.3s;
         }
         input:focus {
             border-color: var(--primary);
             outline: none;
-            background: rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.06);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
         }
         .error-msg {
             background: rgba(239, 68, 68, 0.1);
-            color: #ef4444;
-            padding: 1rem;
-            border-radius: 12px;
-            margin-bottom: 1.5rem;
+            color: #f87171;
+            padding: 1.2rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
             border: 1px solid rgba(239, 68, 68, 0.2);
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
+        .error-msg::before { content: '⚠️'; }
         .divider {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            margin: 1.5rem 0;
+            gap: 1.5rem;
+            margin: 2.5rem 0;
             color: var(--text-muted);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
         .divider::before, .divider::after {
             content: '';
             flex: 1;
             height: 1px;
-            background: var(--glass-border);
+            background: linear-gradient(to right, transparent, var(--glass-border), transparent);
         }
         .trial-box {
-            background: rgba(99, 102, 241, 0.08);
-            border: 1px solid rgba(99, 102, 241, 0.25);
-            border-radius: 16px;
-            padding: 1.5rem;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(6, 182, 212, 0.1));
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: 0.3s;
+        }
+        .trial-box:hover {
+            border-color: rgba(99, 102, 241, 0.4);
+            transform: translateY(-2px);
         }
         .domain-chip {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--glass-border);
-            border-radius: 8px;
-            padding: 0.4rem 0.9rem;
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid rgba(6, 182, 212, 0.2);
+            border-radius: 100px;
+            padding: 0.5rem 1.2rem;
             font-size: 0.85rem;
             color: var(--secondary);
-            font-family: monospace;
-            display: inline-block;
-            margin-bottom: 1.5rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 2rem;
         }
         @media (max-width: 480px) {
-            .activation-card { padding: 1.5rem; margin: 1rem; }
-            h1 { font-size: 1.5rem; }
+            .activation-card { padding: 2rem 1.5rem; margin: 1rem; border-radius: 24px; }
+            h1 { font-size: 1.75rem; }
+            input { padding: 1.1rem; font-size: 0.9rem; }
         }
     </style>
 </head>

@@ -34,45 +34,62 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             align-items: center;
             justify-content: center;
             background: #050810;
+            overflow: hidden;
         }
         .login-card {
             width: 100%;
-            max-width: 400px;
-            padding: 3rem;
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
+            max-width: 420px;
+            padding: 3.5rem;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(40px);
+            border-radius: 32px;
             border: 1px solid var(--glass-border);
             text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: fadeInScale 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
         }
         .form-group {
             text-align: left;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
         }
         label {
             display: block;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
+            font-size: 0.85rem;
+            font-weight: 600;
             color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         input {
             width: 100%;
-            padding: 1rem;
-            background: rgba(255,255,255,0.05);
+            padding: 1.2rem;
+            background: rgba(255,255,255,0.03);
             border: 1px solid var(--glass-border);
-            border-radius: 12px;
+            border-radius: 16px;
             color: white;
             font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s;
         }
         input:focus {
             outline: none;
             border-color: var(--primary);
-            background: rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.06);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
         }
         .error-msg {
-            color: var(--accent);
-            font-size: 0.85rem;
-            margin-bottom: 1.5rem;
+            background: rgba(239, 68, 68, 0.1);
+            color: #f87171;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            font-size: 0.9rem;
         }
     </style>
 </head>

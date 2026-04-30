@@ -115,6 +115,11 @@ $recentAdmissions = $pdo->query("SELECT * FROM ms_admission ORDER BY created_at 
     </style>
 </head>
 <body>
+    <div class="mobile-admin-header" style="display: none;">
+        <button id="openSidebar" style="background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer;">☰</button>
+        <div style="font-weight: 800;"><?php echo strtoupper($appName); ?></div>
+    </div>
+
     <?php 
     $page = 'dashboard';
     require 'layout/sidebar.php'; 
@@ -182,6 +187,37 @@ $recentAdmissions = $pdo->query("SELECT * FROM ms_admission ORDER BY created_at 
             </table>
         </div>
     </main>
+
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const openSidebar = document.getElementById('openSidebar');
+        const closeSidebar = document.getElementById('closeSidebar');
+
+        if (openSidebar) {
+            openSidebar.addEventListener('click', () => {
+                sidebar.classList.add('active');
+            });
+        }
+
+        if (closeSidebar) {
+            closeSidebar.addEventListener('click', () => {
+                sidebar.classList.remove('active');
+            });
+        }
+
+        // Show/hide close button based on screen size
+        function checkWidth() {
+            if (window.innerWidth <= 992) {
+                closeSidebar.style.display = 'block';
+            } else {
+                closeSidebar.style.display = 'none';
+                sidebar.classList.remove('active');
+            }
+        }
+
+        window.addEventListener('resize', checkWidth);
+        checkWidth();
+    </script>
 </body>
 </html>
 

@@ -103,5 +103,29 @@ $admissions = $pdo->query("SELECT * FROM ms_admission ORDER BY created_at DESC")
             </table>
         </div>
     </main>
+
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const openSidebar = document.getElementById('openSidebar');
+        const closeSidebar = document.getElementById('closeSidebar');
+
+        if (openSidebar) {
+            openSidebar.addEventListener('click', () => sidebar.classList.add('active'));
+        }
+        if (closeSidebar) {
+            closeSidebar.addEventListener('click', () => sidebar.classList.remove('active'));
+        }
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 992) {
+                sidebar.classList.remove('active');
+                if(closeSidebar) closeSidebar.style.display = 'none';
+            } else {
+                if(closeSidebar) closeSidebar.style.display = 'block';
+            }
+        });
+        
+        if (window.innerWidth <= 992 && closeSidebar) closeSidebar.style.display = 'block';
+    </script>
 </body>
 </html>

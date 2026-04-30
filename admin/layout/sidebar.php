@@ -2,8 +2,11 @@
 $currentPage = $page ?? '';
 $appName = $_ENV['APP_NAME'] ?? 'MySekolah';
 ?>
-<aside>
-    <div class="logo"><?php echo strtoupper($appName); ?> <span style="font-size: 0.8rem; color: var(--text-muted)">ADMIN</span></div>
+<aside id="sidebar">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <div class="logo"><?php echo strtoupper($appName); ?> <span style="font-size: 0.8rem; color: var(--text-muted)">ADMIN</span></div>
+        <button id="closeSidebar" style="background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; display: none;">✕</button>
+    </div>
     <nav class="admin-nav">
         <a href="index.php" class="admin-nav-item <?php echo $currentPage === 'dashboard' ? 'active' : ''; ?>"><span>📊</span> Dashboard</a>
         <a href="news.php" class="admin-nav-item <?php echo $currentPage === 'news' ? 'active' : ''; ?>"><span>📰</span> Kelola Berita</a>
