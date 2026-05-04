@@ -48,14 +48,64 @@ $gallery = $pdo->query("SELECT * FROM ms_gallery ORDER BY created_at DESC")->fet
     <title>Kelola Galeri | <?php echo $appName; ?></title>
     <link rel="stylesheet" href="../assets/css/style.css?v=<?php echo time(); ?>">
     <style>
-        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
-        .gallery-item { background: var(--glass); border-radius: 15px; border: 1px solid var(--glass-border); overflow: hidden; position: relative; }
-        .gallery-item img { width: 100%; aspect-ratio: 1; object-fit: cover; }
-        .gallery-item .overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transition: 0.3s; padding: 1rem; text-align: center; }
-        .gallery-item:hover .overlay { opacity: 1; }
+        .form-card { 
+            background: var(--glass); 
+            padding: 2.5rem; 
+            border-radius: 24px; 
+            border: 1px solid var(--glass-border); 
+            margin-bottom: 3rem; 
+            backdrop-filter: blur(10px);
+        }
+        .gallery-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+            gap: 2rem; 
+            margin-top: 2rem; 
+        }
+        .gallery-item { 
+            background: var(--glass); 
+            border-radius: 20px; 
+            border: 1px solid var(--glass-border); 
+            overflow: hidden; 
+            position: relative; 
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        .gallery-item:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .gallery-item img { 
+            width: 100%; 
+            aspect-ratio: 16/10; 
+            object-fit: cover; 
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .gallery-content {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .gallery-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--text-light);
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
         
-        .form-card { background: var(--glass); padding: 2rem; border-radius: 20px; border: 1px solid var(--glass-border); margin-bottom: 2rem; }
-        input, button { width: 100%; margin-bottom: 1rem; }
+        @media (max-width: 768px) {
+            .form-card form {
+                flex-direction: column;
+            }
+            .form-card button {
+                width: 100% !important;
+            }
+        }
     </style>
 </head>
 <body class="admin-body">
@@ -95,9 +145,9 @@ $gallery = $pdo->query("SELECT * FROM ms_gallery ORDER BY created_at DESC")->fet
             <?php foreach ($gallery as $item): ?>
             <div class="gallery-item">
                 <img src="../uploads/<?php echo $item['image']; ?>" alt="<?php echo $item['title']; ?>">
-                <div class="overlay">
-                    <p style="font-weight: 600; margin-bottom: 1rem;"><?php echo $item['title']; ?></p>
-                    <a href="gallery.php?delete=<?php echo $item['id']; ?>" class="btn btn-glass" style="color: var(--accent); font-size: 0.8rem;" onclick="return confirm('Hapus foto ini?')">Hapus</a>
+                <div class="gallery-content">
+                    <h4 class="gallery-title"><?php echo $item['title']; ?></h4>
+                    <a href="gallery.php?delete=<?php echo $item['id']; ?>" class="btn btn-glass" style="color: var(--accent); font-size: 0.8rem; width: 100%;" onclick="return confirm('Hapus foto ini?')">Hapus Foto</a>
                 </div>
             </div>
             <?php endforeach; ?>
