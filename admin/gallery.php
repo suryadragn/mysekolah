@@ -48,14 +48,6 @@ $gallery = $pdo->query("SELECT * FROM ms_gallery ORDER BY created_at DESC")->fet
     <title>Kelola Galeri | <?php echo $appName; ?></title>
     <link rel="stylesheet" href="../assets/css/style.css?v=<?php echo time(); ?>">
     <style>
-        .form-card { 
-            background: var(--glass); 
-            padding: 2.5rem; 
-            border-radius: 24px; 
-            border: 1px solid var(--glass-border); 
-            margin-bottom: 3rem; 
-            backdrop-filter: blur(10px);
-        }
         .gallery-grid { 
             display: grid; 
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 

@@ -54,11 +54,6 @@ $socials = $pdo->query("SELECT * FROM ms_socials ORDER BY id ASC")->fetchAll();
     <title>Kelola Sosial Media | <?php echo $appName; ?></title>
     <link rel="stylesheet" href="../assets/css/style.css?v=<?php echo time(); ?>">
     <style>
-        .form-card { background: var(--glass); padding: 2rem; border-radius: 20px; border: 1px solid var(--glass-border); margin-bottom: 3rem; }
-        .form-group { margin-bottom: 1.5rem; }
-        label { display: block; margin-bottom: 0.5rem; color: var(--text-muted); font-size: 0.9rem; }
-        input { width: 100%; padding: 1rem; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-radius: 10px; color: white; }
-        
         .icon-preview { width: 40px; height: 40px; background: var(--glass); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 1px solid var(--glass-border); }
     </style>
 </head>

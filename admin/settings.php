@@ -68,79 +68,105 @@ foreach ($settings_raw as $s) {
     ?>
 
     <main class="admin-main">
-        <h1 style="margin-bottom: 2rem;">Pengaturan Umum</h1>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem;">
+            <h1>Pengaturan Umum</h1>
+        </div>
         
         <?php if (isset($success)): ?>
-            <div style="background: rgba(34, 197, 94, 0.1); color: #22c55e; padding: 1.2rem; border-radius: 12px; margin-bottom: 2rem; border: 1px solid rgba(34, 197, 94, 0.2);">
-                <?php echo $success; ?>
+            <div style="background: rgba(34, 197, 94, 0.1); color: #22c55e; padding: 1.2rem; border-radius: 12px; margin-bottom: 2rem; border: 1px solid rgba(34, 197, 94, 0.2); display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 1.2rem;">✅</span> <?php echo $success; ?>
             </div>
         <?php endif; ?>
 
-        <div class="form-card">
-            <form action="" method="POST" enctype="multipart/form-data">
-                <h3 style="margin-bottom: 2rem; color: var(--secondary);">Informasi Akademik</h3>
-                <div class="form-group">
-                    <label>Tahun Ajaran Aktif</label>
-                    <input type="text" name="settings[academic_year]" value="<?php echo htmlspecialchars($settings['academic_year'] ?? ''); ?>" placeholder="Contoh: 2026/2027">
-                </div>
-                
-                <h3 style="margin-top: 3rem; margin-bottom: 2rem; color: var(--secondary);">Identitas Visual</h3>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
-                    <div class="form-group">
-                        <label>Favicon (Ikon Tab Browser)</label>
-                        <?php if(!empty($settings['site_favicon'])): ?>
-                            <div style="margin-bottom: 1rem;">
-                                <img src="../uploads/<?php echo $settings['site_favicon']; ?>" alt="Favicon" style="height: 40px; border-radius: 8px;">
-                            </div>
-                        <?php endif; ?>
-                        <input type="file" name="site_favicon" accept="image/*">
+        <form action="" method="POST" enctype="multipart/form-data">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem;">
+                <!-- Academic & Statistics -->
+                <div style="display: flex; flex-direction: column; gap: 2rem;">
+                    <div class="form-card">
+                        <h3 style="margin-bottom: 2rem; color: var(--secondary); display: flex; align-items: center; gap: 10px;">
+                            <span>🎓</span> Informasi Akademik
+                        </h3>
+                        <div class="form-group">
+                            <label>Tahun Ajaran Aktif</label>
+                            <input type="text" name="settings[academic_year]" value="<?php echo htmlspecialchars($settings['academic_year'] ?? ''); ?>" placeholder="Contoh: 2026/2027">
+                            <small style="color: var(--text-muted); margin-top: 0.5rem; display: block;">Tahun ajaran ini akan otomatis tercatat saat siswa mendaftar PPDB.</small>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Logo Website (Tampil di Sebelah Nama Aplikasi)</label>
-                        <?php if(!empty($settings['site_logo'])): ?>
-                            <div style="margin-bottom: 1rem;">
-                                <img src="../uploads/<?php echo $settings['site_logo']; ?>" alt="Logo" style="height: 40px; border-radius: 8px;">
+
+                    <div class="form-card">
+                        <h3 style="margin-bottom: 2rem; color: var(--secondary); display: flex; align-items: center; gap: 10px;">
+                            <span>📊</span> Statistik Sekolah (Counter)
+                        </h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                            <div class="form-group">
+                                <label>Siswa Aktif</label>
+                                <input type="text" name="settings[stat_students]" value="<?php echo htmlspecialchars($settings['stat_students'] ?? ''); ?>" placeholder="1.2k+">
                             </div>
-                        <?php endif; ?>
-                        <input type="file" name="site_logo" accept="image/*">
-                    </div>
-                    <div class="form-group" style="grid-column: 1 / -1;">
-                        <label>Gambar Latar Belakang (Hero Section Depan)</label>
-                        <?php if(!empty($settings['hero_bg'])): ?>
-                            <div style="margin-bottom: 1rem;">
-                                <img src="../uploads/<?php echo $settings['hero_bg']; ?>" alt="Hero BG" style="height: 100px; border-radius: 8px; object-fit: cover;">
+                            <div class="form-group">
+                                <label>Tenaga Pendidik</label>
+                                <input type="text" name="settings[stat_teachers]" value="<?php echo htmlspecialchars($settings['stat_teachers'] ?? ''); ?>" placeholder="85+">
                             </div>
-                        <?php endif; ?>
-                        <input type="file" name="hero_bg" accept="image/*">
-                        <small style="color: var(--text-muted); display: block; margin-top: 0.5rem;">Direkomendasikan rasio lanskap resolusi tinggi (misal: 1920x1080).</small>
+                            <div class="form-group">
+                                <label>Prestasi</label>
+                                <input type="text" name="settings[stat_achievements]" value="<?php echo htmlspecialchars($settings['stat_achievements'] ?? ''); ?>" placeholder="42">
+                            </div>
+                            <div class="form-group">
+                                <label>Ekstrakurikuler</label>
+                                <input type="text" name="settings[stat_extracurriculars]" value="<?php echo htmlspecialchars($settings['stat_extracurriculars'] ?? ''); ?>" placeholder="15">
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <h3 style="margin-top: 3rem; margin-bottom: 2rem; color: var(--secondary);">Statistik Sekolah (Counter)</h3>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
-                    <div class="form-group">
-                        <label>Siswa Aktif</label>
-                        <input type="text" name="settings[stat_students]" value="<?php echo htmlspecialchars($settings['stat_students'] ?? ''); ?>" placeholder="Contoh: 1.2k+">
+                <!-- Visual Assets -->
+                <div class="form-card">
+                    <h3 style="margin-bottom: 2rem; color: var(--secondary); display: flex; align-items: center; gap: 10px;">
+                        <span>🎨</span> Identitas Visual & Aset
+                    </h3>
+                    
+                    <div class="form-group" style="margin-bottom: 2rem;">
+                        <label>Favicon (Ikon Tab)</label>
+                        <div style="display: flex; align-items: center; gap: 1.5rem; background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 12px; border: 1px dashed var(--glass-border);">
+                            <?php if(!empty($settings['site_favicon'])): ?>
+                                <img src="../uploads/<?php echo $settings['site_favicon']; ?>" alt="Favicon" style="height: 32px; width: 32px; object-fit: contain;">
+                            <?php else: ?>
+                                <div style="height: 32px; width: 32px; background: var(--glass); border-radius: 4px;"></div>
+                            <?php endif; ?>
+                            <input type="file" name="site_favicon" accept="image/*" style="font-size: 0.8rem;">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Tenaga Pendidik</label>
-                        <input type="text" name="settings[stat_teachers]" value="<?php echo htmlspecialchars($settings['stat_teachers'] ?? ''); ?>" placeholder="Contoh: 85+">
-                    </div>
-                    <div class="form-group">
-                        <label>Prestasi Nasional</label>
-                        <input type="text" name="settings[stat_achievements]" value="<?php echo htmlspecialchars($settings['stat_achievements'] ?? ''); ?>" placeholder="Contoh: 42">
-                    </div>
-                    <div class="form-group">
-                        <label>Ekstrakurikuler</label>
-                        <input type="text" name="settings[stat_extracurriculars]" value="<?php echo htmlspecialchars($settings['stat_extracurriculars'] ?? ''); ?>" placeholder="Contoh: 15">
-                    </div>
-                </div>
 
-                <div style="margin-top: 3rem; border-top: 1px solid var(--glass-border); padding-top: 2rem;">
-                    <button type="submit" name="save_settings" class="btn btn-primary" style="width: auto; padding: 1rem 3rem;">Simpan Perubahan</button>
+                    <div class="form-group" style="margin-bottom: 2rem;">
+                        <label>Logo Website</label>
+                        <div style="display: flex; align-items: center; gap: 1.5rem; background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 12px; border: 1px dashed var(--glass-border);">
+                            <?php if(!empty($settings['site_logo'])): ?>
+                                <img src="../uploads/<?php echo $settings['site_logo']; ?>" alt="Logo" style="height: 40px; border-radius: 4px;">
+                            <?php else: ?>
+                                <div style="height: 40px; width: 100px; background: var(--glass); border-radius: 4px;"></div>
+                            <?php endif; ?>
+                            <input type="file" name="site_logo" accept="image/*" style="font-size: 0.8rem;">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Hero Background (Beranda)</label>
+                        <div style="background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 12px; border: 1px dashed var(--glass-border);">
+                            <?php if(!empty($settings['hero_bg'])): ?>
+                                <img src="../uploads/<?php echo $settings['hero_bg']; ?>" alt="Hero BG" style="width: 100%; height: 120px; border-radius: 8px; object-fit: cover; margin-bottom: 1rem;">
+                            <?php endif; ?>
+                            <input type="file" name="hero_bg" accept="image/*" style="width: 100%; font-size: 0.8rem;">
+                            <small style="color: var(--text-muted); display: block; margin-top: 0.5rem;">Rasio 16:9 direkomendasikan.</small>
+                        </div>
+                    </div>
                 </div>
-            </form>
-        </div>
+            </div>
+
+            <div style="margin-top: 3rem; position: sticky; bottom: 2rem; z-index: 10;">
+                <button type="submit" name="save_settings" class="btn btn-primary" style="width: auto; padding: 1.2rem 4rem; box-shadow: 0 10px 30px rgba(0, 209, 255, 0.3);">
+                    Simpan Semua Perubahan
+                </button>
+            </div>
+        </form>
     </main>
 
     <script>

@@ -7,9 +7,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
     $phone = $_POST['phone'];
     $school = $_POST['school_origin'];
+    $academicYear = $globalSettings['academic_year'] ?? date('Y') . '/' . (date('Y') + 1);
     
-    $stmt = $pdo->prepare("INSERT INTO ms_admission (full_name, email, phone, school_origin) VALUES (?, ?, ?, ?)");
-    $stmt->execute([$name, $email, $phone, $school]);
+    $stmt = $pdo->prepare("INSERT INTO ms_admission (full_name, email, phone, school_origin, academic_year) VALUES (?, ?, ?, ?, ?)");
+    $stmt->execute([$name, $email, $phone, $school, $academicYear]);
     $success = "Pendaftaran Anda berhasil! Silakan tunggu konfirmasi melalui email.";
 }
 

@@ -20,8 +20,23 @@ if (isset($_GET['delete'])) {
     redirect('admission.php');
 }
 
-// Fetch Admissions
-$admissions = $pdo->query("SELECT * FROM ms_admission ORDER BY created_at DESC")->fetchAll();
+// Fetch unique academic years for filter
+$years = $pdo->query("SELECT DISTINCT academic_year FROM ms_admission WHERE academic_year IS NOT NULL ORDER BY academic_year DESC")->fetchAll(PDO::FETCH_COLUMN);
+
+// Handle Filter
+$filterYear = $_GET['year'] ?? '';
+$query = "SELECT * FROM ms_admission";
+$params = [];
+
+if ($filterYear) {
+    $query .= " WHERE academic_year = ?";
+    $params[] = $filterYear;
+}
+
+$query .= " ORDER BY created_at DESC";
+$stmt = $pdo->prepare($query);
+$stmt->execute($params);
+$admissions = $stmt->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -31,15 +46,34 @@ $admissions = $pdo->query("SELECT * FROM ms_admission ORDER BY created_at DESC")
     <title>Data PPDB | <?php echo $appName; ?></title>
     <link rel="stylesheet" href="../assets/css/style.css?v=<?php echo time(); ?>">
     <style>
-        :root { --sidebar-width: 280px; }
-        body { display: flex; min-height: 100vh; background: #050810; }
-        aside { width: var(--sidebar-width); background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border-right: 1px solid var(--glass-border); padding: 2rem; display: flex; flex-direction: column; position: fixed; height: 100vh; overflow-y: auto; }
-        aside::-webkit-scrollbar { display: none; }
-        aside { -ms-overflow-style: none; scrollbar-width: none; }
-        .admin-nav { margin-top: 3rem; display: flex; flex-direction: column; gap: 0.5rem; }
-        .admin-nav-item { padding: 1rem 1.5rem; border-radius: 12px; color: var(--text-muted); text-decoration: none; transition: 0.3s; display: flex; align-items: center; gap: 12px; }
-        .admin-nav-item:hover, .admin-nav-item.active { background: var(--glass); color: var(--secondary); border: 1px solid var(--glass-border); }
-        main { margin-left: var(--sidebar-width); flex: 1; padding: 3rem; }
+        .filter-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .filter-group select {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            color: white;
+            outline: none;
+            min-width: 150px;
+        }
+        .filter-group select option {
+            background: #0f172a;
+        }
         
         .table-container { background: var(--glass); border-radius: 20px; border: 1px solid var(--glass-border); overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; text-align: left; }
@@ -56,19 +90,38 @@ $admissions = $pdo->query("SELECT * FROM ms_admission ORDER BY created_at DESC")
     require 'layout/sidebar.php'; 
     ?>
 
-    <main>
+    <main class="admin-main">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
             <h1>Data Pendaftar PPDB</h1>
-            <a href="export_admission.php" class="btn btn-primary">📥 Tarik Data ke Excel</a>
+            <a href="export_admission.php" class="btn btn-primary" style="width: auto; padding: 0.8rem 1.5rem;">📥 Tarik Data ke Excel</a>
+        </div>
+
+        <div class="filter-card">
+            <div class="filter-group">
+                <span>🔍 Filter Tahun Ajaran:</span>
+                <form action="" method="GET" id="filterForm">
+                    <select name="year" onchange="document.getElementById('filterForm').submit()">
+                        <option value="">Semua Tahun</option>
+                        <?php foreach ($years as $y): ?>
+                            <option value="<?php echo $y; ?>" <?php echo $filterYear === $y ? 'selected' : ''; ?>>
+                                <?php echo $y; ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </form>
+            </div>
+            <?php if ($filterYear): ?>
+                <a href="admission.php" style="color: var(--accent); text-decoration: none; font-size: 0.9rem;">Reset Filter</a>
+            <?php endif; ?>
         </div>
         
         <div class="table-container">
             <table>
                 <thead>
                     <tr>
+                        <th>Tahun Ajaran</th>
                         <th>Nama Lengkap</th>
-                        <th>Email</th>
-                        <th>No. Telp</th>
+                        <th>Email / No. Telp</th>
                         <th>Asal Sekolah</th>
                         <th>Tanggal Daftar</th>
                         <th>Status</th>
@@ -78,26 +131,35 @@ $admissions = $pdo->query("SELECT * FROM ms_admission ORDER BY created_at DESC")
                 <tbody>
                     <?php foreach ($admissions as $row): ?>
                     <tr>
-                        <td><?php echo $row['full_name']; ?></td>
-                        <td><?php echo $row['email']; ?></td>
-                        <td><?php echo $row['phone']; ?></td>
+                        <td>
+                            <div style="font-weight: 600; color: var(--secondary);"><?php echo $row['academic_year'] ?? '-'; ?></div>
+                        </td>
+                        <td>
+                            <div style="font-weight: 600;"><?php echo $row['full_name']; ?></div>
+                        </td>
+                        <td>
+                            <div style="font-size: 0.9rem;"><?php echo $row['email']; ?></div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);"><?php echo $row['phone']; ?></div>
+                        </td>
                         <td><?php echo $row['school_origin']; ?></td>
-                        <td><?php echo date('d M Y', strtotime($row['created_at'])); ?></td>
+                        <td><?php echo date('d/m/y', strtotime($row['created_at'])); ?></td>
                         <td>
                             <span class="badge badge-<?php echo $row['status'] === 'verified' ? 'success' : 'warning'; ?>">
                                 <?php echo ucfirst($row['status']); ?>
                             </span>
                         </td>
                         <td>
-                            <?php if ($row['status'] !== 'verified'): ?>
-                                <a href="admission.php?verify=<?php echo $row['id']; ?>" style="color: var(--secondary); text-decoration: none; margin-right: 1rem;">Verifikasi</a>
-                            <?php endif; ?>
-                            <a href="admission.php?delete=<?php echo $row['id']; ?>" style="color: var(--accent); text-decoration: none;" onclick="return confirm('Hapus pendaftar ini?')">Hapus</a>
+                            <div style="display: flex; gap: 10px;">
+                                <?php if ($row['status'] !== 'verified'): ?>
+                                    <a href="admission.php?verify=<?php echo $row['id']; ?>" class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.75rem; background: rgba(0, 209, 255, 0.1); color: var(--secondary); border: 1px solid var(--secondary);">Verifikasi</a>
+                                <?php endif; ?>
+                                <a href="admission.php?delete=<?php echo $row['id']; ?>" class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.75rem; background: rgba(255, 62, 116, 0.1); color: var(--accent); border: 1px solid var(--accent);" onclick="return confirm('Hapus pendaftar ini?')">Hapus</a>
+                            </div>
                         </td>
                     </tr>
                     <?php endforeach; ?>
                     <?php if (empty($admissions)): ?>
-                        <tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 3rem;">Belum ada data pendaftar.</td></tr>
+                        <tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 3rem;">Belum ada data pendaftar.</td></tr>
                     <?php endif; ?>
                 </tbody>
             </table>

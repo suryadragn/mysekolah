@@ -20,61 +20,13 @@ $recentAdmissions = $pdo->query("SELECT * FROM ms_admission ORDER BY created_at 
     <title>Admin Dashboard | <?php echo $appName; ?></title>
     <link rel="stylesheet" href="../assets/css/style.css?v=<?php echo time(); ?>">
     <style>
-        :root {
-            --sidebar-width: 280px;
-        }
-        body {
-            display: flex;
-            min-height: 100vh;
-            background: #050810;
-        }
-        /* Sidebar Customization */
-        aside {
-            width: var(--sidebar-width);
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(20px);
-            border-right: 1px solid var(--glass-border);
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-        }
-        aside::-webkit-scrollbar { display: none; }
-        aside { -ms-overflow-style: none; scrollbar-width: none; }
-        .admin-nav {
-            margin-top: 3rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-        .admin-nav-item {
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
-            color: var(--text-muted);
-            text-decoration: none;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .admin-nav-item:hover, .admin-nav-item.active {
-            background: var(--glass);
-            color: var(--secondary);
-            border: 1px solid var(--glass-border);
-        }
-        /* Main Content */
-        main {
-            margin-left: var(--sidebar-width);
-            flex: 1;
-            padding: 3rem;
-        }
         .dashboard-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 3rem;
+            flex-wrap: wrap;
+            gap: 1.5rem;
         }
         .card-grid {
             display: grid;
@@ -114,10 +66,10 @@ $recentAdmissions = $pdo->query("SELECT * FROM ms_admission ORDER BY created_at 
         .badge-warning { background: rgba(234, 179, 8, 0.1); color: #eab308; }
     </style>
 </head>
-<body>
-    <div class="mobile-admin-header" style="display: none;">
+<body class="admin-body">
+    <div class="mobile-admin-header">
         <button id="openSidebar" style="background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer;">☰</button>
-        <div style="font-weight: 800;"><?php echo strtoupper($appName); ?></div>
+        <div style="font-weight: 800; font-size: 1.1rem;"><?php echo strtoupper($appName); ?></div>
     </div>
 
     <?php 
@@ -125,40 +77,64 @@ $recentAdmissions = $pdo->query("SELECT * FROM ms_admission ORDER BY created_at 
     require 'layout/sidebar.php'; 
     ?>
 
-    <main>
+    <main class="admin-main">
         <div class="dashboard-header">
             <div>
-                <h1 style="font-size: 2rem;">Halo, <?php echo $_SESSION['full_name']; ?></h1>
+                <h1 style="font-size: 2.2rem; margin-bottom: 0.5rem;">Halo, <?php echo explode(' ', $_SESSION['full_name'])[0]; ?> 👋</h1>
                 <p style="color: var(--text-muted)">Selamat datang kembali di panel kendali MySekolah.</p>
             </div>
-            <div style="display: flex; gap: 1rem;">
+            <div style="display: flex; gap: 1rem; align-items: center; background: var(--glass); padding: 0.8rem 1.5rem; border-radius: 16px; border: 1px solid var(--glass-border);">
                 <div style="text-align: right;">
-                    <p style="font-weight: 600;"><?php echo $_SESSION['full_name']; ?></p>
-                    <p style="font-size: 0.8rem; color: var(--text-muted)">Administrator</p>
+                    <p style="font-weight: 600; font-size: 0.95rem;"><?php echo $_SESSION['full_name']; ?></p>
+                    <p style="font-size: 0.75rem; color: var(--secondary); font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Administrator</p>
                 </div>
-                <div style="width: 45px; height: 45px; background: var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800;">A</div>
+                <div style="width: 42px; height: 42px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; color: white; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);">
+                    <?php echo substr($_SESSION['full_name'], 0, 1); ?>
+                </div>
             </div>
         </div>
 
         <div class="card-grid">
-            <div class="stat-card" style="text-align: left; padding: 1.5rem;">
-                <p style="color: var(--text-muted); font-size: 0.9rem;">Pendaftar PPDB</p>
-                <h3 style="font-size: 2rem; margin: 0.5rem 0;"><?php echo $admissionCount; ?></h3>
-                <p style="color: var(--secondary); font-size: 0.8rem;">Total siswa mendaftar</p>
+            <div class="stat-card" style="text-align: left; padding: 2rem; border-left: 4px solid var(--primary);">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                    <p style="color: var(--text-muted); font-size: 0.9rem; font-weight: 600;">Pendaftar PPDB</p>
+                    <span style="font-size: 1.5rem;">📝</span>
+                </div>
+                <h3 style="font-size: 2.5rem; margin: 0.5rem 0; color: white;"><?php echo $admissionCount; ?></h3>
+                <p style="color: var(--secondary); font-size: 0.8rem; display: flex; align-items: center; gap: 5px;">
+                    <span style="display: inline-block; width: 8px; height: 8px; background: var(--secondary); border-radius: 50%;"></span>
+                    Total siswa mendaftar
+                </p>
             </div>
-            <div class="stat-card" style="text-align: left; padding: 1.5rem;">
-                <p style="color: var(--text-muted); font-size: 0.9rem;">Total Berita</p>
-                <h3 style="font-size: 2rem; margin: 0.5rem 0;"><?php echo $newsCount; ?></h3>
-                <p style="color: var(--secondary); font-size: 0.8rem;">Konten aktif</p>
+            <div class="stat-card" style="text-align: left; padding: 2rem; border-left: 4px solid var(--secondary);">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                    <p style="color: var(--text-muted); font-size: 0.9rem; font-weight: 600;">Total Berita</p>
+                    <span style="font-size: 1.5rem;">📰</span>
+                </div>
+                <h3 style="font-size: 2.5rem; margin: 0.5rem 0; color: white;"><?php echo $newsCount; ?></h3>
+                <p style="color: var(--secondary); font-size: 0.8rem; display: flex; align-items: center; gap: 5px;">
+                    <span style="display: inline-block; width: 8px; height: 8px; background: var(--secondary); border-radius: 50%;"></span>
+                    Konten aktif di web
+                </p>
             </div>
-            <div class="stat-card" style="text-align: left; padding: 1.5rem;">
-                <p style="color: var(--text-muted); font-size: 0.9rem;">Pesan Baru</p>
-                <h3 style="font-size: 2rem; margin: 0.5rem 0;"><?php echo $messageCount; ?></h3>
-                <p style="color: var(--accent); font-size: 0.8rem;">Perlu ditanggapi</p>
+            <div class="stat-card" style="text-align: left; padding: 2rem; border-left: 4px solid var(--accent);">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                    <p style="color: var(--text-muted); font-size: 0.9rem; font-weight: 600;">Pesan Baru</p>
+                    <span style="font-size: 1.5rem;">📧</span>
+                </div>
+                <h3 style="font-size: 2.5rem; margin: 0.5rem 0; color: white;"><?php echo $messageCount; ?></h3>
+                <p style="color: var(--accent); font-size: 0.8rem; display: flex; align-items: center; gap: 5px;">
+                    <span style="display: inline-block; width: 8px; height: 8px; background: var(--accent); border-radius: 50%;"></span>
+                    Perlu ditanggapi
+                </p>
             </div>
         </div>
 
-        <h2 style="margin-bottom: 1.5rem;">Pendaftar PPDB Terbaru</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2 style="font-size: 1.5rem;">Pendaftar PPDB Terbaru</h2>
+            <a href="admission.php" style="color: var(--secondary); text-decoration: none; font-size: 0.9rem; font-weight: 600;">Lihat Semua →</a>
+        </div>
+        
         <div class="table-container">
             <table>
                 <thead>
@@ -167,21 +143,24 @@ $recentAdmissions = $pdo->query("SELECT * FROM ms_admission ORDER BY created_at 
                         <th>Tanggal Daftar</th>
                         <th>Asal Sekolah</th>
                         <th>Status</th>
-                        <th>Aksi</th>
+                        <th style="text-align: right;">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($recentAdmissions as $row): ?>
                     <tr>
-                        <td><?php echo $row['full_name']; ?></td>
+                        <td>
+                            <div style="font-weight: 600;"><?php echo $row['full_name']; ?></div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);"><?php echo $row['email']; ?></div>
+                        </td>
                         <td><?php echo date('d M Y', strtotime($row['created_at'])); ?></td>
                         <td><?php echo $row['school_origin']; ?></td>
                         <td><span class="badge badge-<?php echo $row['status'] === 'verified' ? 'success' : 'warning'; ?>"><?php echo ucfirst($row['status']); ?></span></td>
-                        <td><a href="admission.php" style="color: var(--secondary); text-decoration: none;">Detail</a></td>
+                        <td style="text-align: right;"><a href="admission.php" class="btn btn-glass" style="padding: 0.5rem 1rem; font-size: 0.8rem;">Detail</a></td>
                     </tr>
                     <?php endforeach; ?>
                     <?php if (empty($recentAdmissions)): ?>
-                        <tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Belum ada data pendaftar.</td></tr>
+                        <tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 3rem;">Belum ada data pendaftar.</td></tr>
                     <?php endif; ?>
                 </tbody>
             </table>
