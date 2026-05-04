@@ -84,7 +84,12 @@ $admissions = $stmt->fetchAll();
         .badge-warning { background: rgba(234, 179, 8, 0.1); color: #eab308; }
     </style>
 </head>
-<body>
+<body class="admin-body">
+    <div class="mobile-admin-header">
+        <button id="openSidebar" style="background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer;">☰</button>
+        <div style="font-weight: 800; font-size: 1.1rem;"><?php echo strtoupper($appName); ?></div>
+    </div>
+
     <?php 
     $page = 'admission';
     require 'layout/sidebar.php'; 

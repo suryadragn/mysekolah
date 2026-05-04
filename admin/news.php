@@ -23,15 +23,6 @@ $news = $pdo->query("SELECT * FROM ms_news ORDER BY created_at DESC")->fetchAll(
     <title>Kelola Berita | <?php echo $appName; ?></title>
     <link rel="stylesheet" href="../assets/css/style.css?v=<?php echo time(); ?>">
     <style>
-        :root { --sidebar-width: 280px; }
-        body { display: flex; min-height: 100vh; background: #050810; }
-        aside { width: var(--sidebar-width); background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border-right: 1px solid var(--glass-border); padding: 2rem; display: flex; flex-direction: column; position: fixed; height: 100vh; overflow-y: auto; }
-        aside::-webkit-scrollbar { display: none; }
-        aside { -ms-overflow-style: none; scrollbar-width: none; }
-        .admin-nav { margin-top: 3rem; display: flex; flex-direction: column; gap: 0.5rem; }
-        .admin-nav-item { padding: 1rem 1.5rem; border-radius: 12px; color: var(--text-muted); text-decoration: none; transition: 0.3s; display: flex; align-items: center; gap: 12px; }
-        .admin-nav-item:hover, .admin-nav-item.active { background: var(--glass); color: var(--secondary); border: 1px solid var(--glass-border); }
-        main { margin-left: var(--sidebar-width); flex: 1; padding: 3rem; }
         .table-container { background: var(--glass); border-radius: 20px; border: 1px solid var(--glass-border); overflow-x: auto; margin-top: 2rem; }
         table { width: 100%; border-collapse: collapse; text-align: left; }
         th, td { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--glass-border); }

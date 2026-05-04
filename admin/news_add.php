@@ -40,33 +40,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
 
     <style>
-        :root { --sidebar-width: 280px; }
-        body { display: flex; min-height: 100vh; background: #050810; font-family: 'Inter', sans-serif; color: white; }
-        aside { width: var(--sidebar-width); background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border-right: 1px solid var(--glass-border); padding: 2rem; display: flex; flex-direction: column; position: fixed; height: 100vh; z-index: 10; overflow-y: auto; }
-        aside::-webkit-scrollbar { display: none; }
-        aside { -ms-overflow-style: none; scrollbar-width: none; }
-        main { margin-left: var(--sidebar-width); flex: 1; padding: 3rem; }
-        .form-card { background: var(--glass); padding: 3rem; border-radius: 24px; border: 1px solid var(--glass-border); max-width: 900px; }
-        .form-group { margin-bottom: 2rem; }
-        label { display: block; margin-bottom: 0.5rem; color: var(--text-muted); font-weight: 600; }
-        input[type="text"], input[type="file"] { width: 100%; padding: 1.2rem; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-radius: 12px; color: white; }
+        .form-card { background: var(--glass); padding: 3rem; border-radius: 24px; border: 1px solid var(--glass-border); max-width: 900px; backdrop-filter: blur(10px); }
         
         /* Summernote Overrides for Dark Mode */
         .note-editor { background: white; border-radius: 12px; overflow: hidden; color: #333; }
-        .btn-primary { background: #6366f1 !important; border: none; border-radius: 50px; padding: 1rem 2.5rem; }
+        .note-editor .note-editing-area { background: white; }
     </style>
 </head>
-<body>
-    <aside>
-        <div class="logo">MYSEKOLAH <span style="font-size: 0.8rem; color: var(--text-muted)">ADMIN</span></div>
-        <div style="margin-top: 2rem;">
-            <a href="news.php" style="color: var(--text-muted); text-decoration: none;">← Kembali ke List</a>
-        </div>
-    </aside>
+<body class="admin-body">
+    <div class="mobile-admin-header">
+        <button id="openSidebar" style="background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer;">☰</button>
+        <div style="font-weight: 800; font-size: 1.1rem;"><?php echo strtoupper($appName ?? 'MySekolah'); ?></div>
+    </div>
 
-    <main>
-        <h1 style="margin-bottom: 2rem; font-family: 'Outfit', sans-serif;">Tambah Berita Baru</h1>
-        <div class="form-card">
+    <?php 
+    $page = 'news';
+    require 'layout/sidebar.php'; 
+    ?>
+
+    <main class="admin-main">
+         <div style="margin-bottom: 2rem;">
+             <a href="news.php" style="color: var(--secondary); text-decoration: none; display: flex; align-items: center; gap: 8px;">
+                 <span>←</span> Kembali ke List Berita
+             </a>
+             <h1 style="margin-top: 1rem; font-family: 'Outfit', sans-serif;">Tambah Berita Baru</h1>
+         </div>
+         <div class="form-card">
             <form action="" method="POST" enctype="multipart/form-data">
                 <div class="form-group">
                     <label>Judul Berita</label>
@@ -104,6 +103,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ['view', ['fullscreen', 'codeview', 'help']]
                 ]
             });
+
+            // Sidebar Toggle Logic
+            const sidebar = document.getElementById('sidebar');
+            const openSidebar = document.getElementById('openSidebar');
+            const closeSidebar = document.getElementById('closeSidebar');
+
+            if (openSidebar) {
+                openSidebar.addEventListener('click', () => sidebar.classList.add('active'));
+            }
+            if (closeSidebar) {
+                closeSidebar.addEventListener('click', () => sidebar.classList.remove('active'));
+            }
+
+            window.addEventListener('resize', () => {
+                if (window.innerWidth > 992) {
+                    sidebar.classList.remove('active');
+                    if(closeSidebar) closeSidebar.style.display = 'none';
+                } else {
+                    if(closeSidebar) closeSidebar.style.display = 'block';
+                }
+            });
+            
+            if (window.innerWidth <= 992 && closeSidebar) closeSidebar.style.display = 'block';
         });
     </script>
 </body>
