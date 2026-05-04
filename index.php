@@ -115,7 +115,7 @@ if (!$_isAllowed) {
     </div>
     <?php endif; ?>
 
-    <nav>
+    <nav class="site-nav">
         <div class="logo">
             <a href="#home" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 10px;">
                 <?php if(!empty($settings['site_logo'])): ?>
@@ -357,7 +357,7 @@ if (!$_isAllowed) {
         // Mobile Nav Toggle & Scroll Effect
         const navToggle = document.getElementById('navToggle');
         const navLinks = document.getElementById('navLinks');
-        const nav = document.querySelector('nav');
+        const nav = document.querySelector('.site-nav');
         
         if (navToggle && navLinks) {
             navToggle.addEventListener('click', (e) => {

@@ -23,7 +23,7 @@ $gallery = $pdo->query("SELECT * FROM ms_gallery ORDER BY created_at DESC")->fet
     <div class="bg-blob blob-1"></div>
     <div class="bg-blob blob-2"></div>
 
-    <nav>
+    <nav class="site-nav">
         <div class="logo">
             <a href="index.php" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 10px;">
                 <?php if(!empty($globalSettings['site_logo'])): ?>
