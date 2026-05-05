@@ -1,6 +1,10 @@
 <?php
 session_start();
 
+if (!defined('LICENSE_SALT')) {
+    define('LICENSE_SALT', 'SURYADRAGN-SECRET-2026-!@#XQZP');
+}
+
 function loadEnv($path) {
     if (!file_exists($path)) return;
     $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
@@ -42,6 +46,52 @@ function redirect($path) {
     exit();
 }
 
+function normalizeDomain($host) {
+    $host = strtolower(trim($host));
+    $host = explode(':', $host)[0];
+    return preg_replace('/^www\./', '', $host);
+}
+
+function getCurrentDomain() {
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    return normalizeDomain($host);
+}
+
+function generateLicenseKeyForDomain($domain) {
+    $clean = normalizeDomain($domain);
+    return strtoupper(
+        substr(hash('sha256', $clean . LICENSE_SALT), 0, 8) . '-' .
+        substr(hash('sha256', LICENSE_SALT . $clean), 8, 8) . '-' .
+        substr(hash('sha256', $clean . $clean . LICENSE_SALT), 16, 8)
+    );
+}
+
+function isLicenseAllowed($globalSettings) {
+    $appStatus = $globalSettings['app_status'] ?? 'inactive';
+    $appLicenseKey = strtoupper(trim($globalSettings['app_license_key'] ?? ''));
+    $trialStartedAt = $globalSettings['trial_started_at'] ?? '';
+    $trialDays = 14;
+
+    $currentDomain = getCurrentDomain();
+    $validKey = generateLicenseKeyForDomain($currentDomain);
+
+    if ($appStatus === 'active' && $appLicenseKey !== '' && hash_equals($validKey, $appLicenseKey)) {
+        return true;
+    }
+
+    if ($appStatus === 'trial' && !empty($trialStartedAt)) {
+        $trialStart = new DateTime($trialStartedAt);
+        $now = new DateTime();
+        $daysUsed = $now->diff($trialStart)->days;
+        if ($daysUsed < $trialDays) {
+            $GLOBALS['trialDaysLeft'] = $trialDays - $daysUsed;
+            return true;
+        }
+    }
+
+    return false;
+}
+
 // Fetch global settings
 $globalSettings = [];
 try {
@@ -58,32 +108,7 @@ try {
 // License Activation Check
 $currentFile = basename($_SERVER['PHP_SELF']);
 if ($currentFile !== 'activate.php') {
-    $appStatus = $globalSettings['app_status'] ?? 'inactive';
-    $appLicenseKey = $globalSettings['app_license_key'] ?? '';
-    $trialStartedAt = $globalSettings['trial_started_at'] ?? '';
-    $trialDays = 14;
-    $isAllowed = false;
-
-    // Strong License Validation
-    define('DB_LICENSE_SALT', 'SURYADRAGN-SECRET-2026-!@#XQZP');
-    $currentDomain = strtolower(preg_replace('/^www\./', '', explode(':', $_SERVER['HTTP_HOST'] ?? 'localhost')[0]));
-    $validKey = strtoupper(substr(hash('sha256', $currentDomain . DB_LICENSE_SALT), 0, 8) . '-' .
-               substr(hash('sha256', DB_LICENSE_SALT . $currentDomain), 8, 8) . '-' .
-               substr(hash('sha256', $currentDomain . $currentDomain . DB_LICENSE_SALT), 16, 8));
-
-    if ($appStatus === 'active' && $appLicenseKey === $validKey) {
-        $isAllowed = true;
-    } elseif ($appStatus === 'trial' && !empty($trialStartedAt)) {
-        $trialStart = new DateTime($trialStartedAt);
-        $now = new DateTime();
-        $daysUsed = $now->diff($trialStart)->days;
-        if ($daysUsed < $trialDays) {
-            $isAllowed = true;
-            $GLOBALS['trialDaysLeft'] = $trialDays - $daysUsed;
-        }
-    }
-
-    if (!$isAllowed) {
+    if (!isLicenseAllowed($globalSettings)) {
         $baseDir = dirname($_SERVER['PHP_SELF']);
         $prefix = (basename($baseDir) === 'admin') ? '../' : '';
         redirect($prefix . 'activate.php');

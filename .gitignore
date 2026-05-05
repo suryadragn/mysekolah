@@ -1,5 +1,7 @@
 .env
 keygen.php
+keygen.php.backup
+keygen.php.bak
 database_structure.sql
 /uploads/*
 !/uploads/.gitkeep

@@ -4,26 +4,8 @@ require_once 'admin/db.php';
 $appName = $_ENV['APP_NAME'] ?? 'MySekolah';
 $trialDays = 14;
 
-// --- SECRET SALT (Jangan pernah ubah ini setelah distribusi!) ---
-// Salt ini adalah rahasia mutlak Anda. Jangan share ke siapapun.
-define('LICENSE_SALT', 'SURYADRAGN-SECRET-2026-!@#XQZP');
-
-// --- Generate key berdasarkan domain ---
-function generateLicenseKey($domain) {
-    $clean = strtolower(preg_replace('/^www\./', '', $domain));
-    return strtoupper(substr(hash('sha256', $clean . LICENSE_SALT), 0, 8) . '-' .
-           substr(hash('sha256', LICENSE_SALT . $clean), 8, 8) . '-' .
-           substr(hash('sha256', $clean . $clean . LICENSE_SALT), 16, 8));
-}
-
-// --- Get current domain ---
-function getCurrentDomain() {
-    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-    return strtolower(preg_replace('/^www\./', '', explode(':', $host)[0]));
-}
-
 $currentDomain = getCurrentDomain();
-$validKey = generateLicenseKey($currentDomain);
+$validKey = generateLicenseKeyForDomain($currentDomain);
 
 $appStatus = $globalSettings['app_status'] ?? 'inactive';
 $trialStartedAt = $globalSettings['trial_started_at'] ?? '';
@@ -53,7 +35,7 @@ if ($appStatus === 'active' && $appLicenseKey !== $validKey && $appLicenseKey !=
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['activate'])) {
     $inputKey = strtoupper(trim($_POST['license_key'] ?? ''));
 
-    if ($inputKey === $validKey) {
+    if ($inputKey !== '' && hash_equals($validKey, $inputKey)) {
         $pdo->exec("UPDATE ms_settings SET s_value = 'active' WHERE s_key = 'app_status'");
         $pdo->prepare("UPDATE ms_settings SET s_value = ? WHERE s_key = 'app_license_key'")->execute([$inputKey]);
         redirect('index.php');

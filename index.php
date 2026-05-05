@@ -1,26 +1,11 @@
 <?php
 
-/**
- * Simple .env Loader
- */
-function loadEnv($path)
-{
-    if (!file_exists($path)) return;
-    $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    foreach ($lines as $line) {
-        if (strpos(trim($line), '#') === 0) continue;
-        list($name, $value) = explode('=', $line, 2);
-        $name = trim($name);
-        $value = trim($value, " \t\n\r\0\x0B\"");
-        if (!array_key_exists($name, $_SERVER) && !array_key_exists($name, $_ENV)) {
-            putenv(sprintf('%s=%s', $name, $value));
-            $_ENV[$name] = $value;
-            $_SERVER[$name] = $value;
-        }
-    }
-}
+require_once __DIR__ . '/admin/db.php';
 
-loadEnv(__DIR__ . '/.env');
+$appName = $_ENV['APP_NAME'] ?? 'MySekolah';
+$schoolTagline = $_ENV['SCHOOL_TAGLINE'] ?? 'Excellence in Education';
+
+$settings = $globalSettings ?? [];
 
 // Handle Contact Form Submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
@@ -29,67 +14,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
     $message = $_POST['message'] ?? '';
 
     if ($name && $email && $message) {
-        // Re-use db connection logic briefly
-        $db_host = $_ENV['DB_HOST'] ?? '127.0.0.1';
-        $db_port = $_ENV['DB_PORT'] ?? '3306';
-        $db_name = $_ENV['DB_NAME'] ?? 'db_cms_sekolahku';
-        $db_user = $_ENV['DB_USER'] ?? 'root';
-        $db_pass = $_ENV['DB_PASS'] ?? '';
-        $pdo = new PDO("mysql:host=$db_host;port=$db_port;dbname=$db_name", $db_user, $db_pass);
-
         $stmt = $pdo->prepare("INSERT INTO ms_messages (name, email, message) VALUES (?, ?, ?)");
         $stmt->execute([$name, $email, $message]);
         $success_msg = "Pesan Anda telah terkirim!";
     }
 }
 
-$appName = $_ENV['APP_NAME'] ?? 'MySekolah';
-$schoolTagline = $_ENV['SCHOOL_TAGLINE'] ?? 'Excellence in Education';
-
-// Fetch settings from DB
-$db_host = $_ENV['DB_HOST'] ?? '127.0.0.1';
-$db_port = $_ENV['DB_PORT'] ?? '3306';
-$db_name = $_ENV['DB_NAME'] ?? 'mysekolah';
-$db_user = $_ENV['DB_USER'] ?? 'root';
-$db_pass = $_ENV['DB_PASS'] ?? '';
-$pdo_init = new PDO("mysql:host=$db_host;port=$db_port;dbname=$db_name", $db_user, $db_pass);
-$settings_raw = $pdo_init->query("SELECT * FROM ms_settings")->fetchAll(PDO::FETCH_ASSOC);
-$settings = [];
-foreach ($settings_raw as $s) {
-    $settings[$s['s_key']] = $s['s_value'];
-}
 $socials = [];
 try {
-    $socials = $pdo_init->query("SELECT * FROM ms_socials ORDER BY id ASC")->fetchAll(PDO::FETCH_ASSOC);
+    $socials = $pdo->query("SELECT * FROM ms_socials ORDER BY id ASC")->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {}
-
-// --- License Check (independent dari db.php) ---
-define('LICENSE_SALT', 'SURYADRAGN-SECRET-2026-!@#XQZP');
-$_appStatus = $settings['app_status'] ?? 'inactive';
-$_appLicenseKey = $settings['app_license_key'] ?? '';
-$_trialStartedAt = $settings['trial_started_at'] ?? '';
-$_trialDays = 14;
-$_isAllowed = false;
-
-$_currentDomain = strtolower(preg_replace('/^www\./', '', explode(':', $_SERVER['HTTP_HOST'] ?? 'localhost')[0]));
-$_validKey = strtoupper(substr(hash('sha256', $_currentDomain . LICENSE_SALT), 0, 8) . '-' .
-       substr(hash('sha256', LICENSE_SALT . $_currentDomain), 8, 8) . '-' .
-       substr(hash('sha256', $_currentDomain . $_currentDomain . LICENSE_SALT), 16, 8));
-
-if ($_appStatus === 'active' && $_appLicenseKey === $_validKey) {
-    $_isAllowed = true;
-} elseif ($_appStatus === 'trial' && !empty($_trialStartedAt)) {
-    $trialStart = new DateTime($_trialStartedAt);
-    $daysUsed = (new DateTime())->diff($trialStart)->days;
-    if ($daysUsed < $_trialDays) {
-        $_isAllowed = true;
-        $GLOBALS['trialDaysLeft'] = $_trialDays - $daysUsed;
-    }
-}
-if (!$_isAllowed) {
-    header('Location: activate.php');
-    exit();
-}
 ?>
 <!DOCTYPE html>
 <html lang="id">
