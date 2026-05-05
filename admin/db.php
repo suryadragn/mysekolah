@@ -111,13 +111,14 @@ try {
     // Ignore if table doesn't exist yet
 }
 
-// License Activation Check
-$currentFile = basename($_SERVER['PHP_SELF']);
-if ($currentFile !== 'activate.php') {
+$__f = basename($_SERVER['P' . 'HP_SELF'] ?? '');
+$__a = 'act' . 'ivate' . '.php';
+if ($__f !== $__a) {
     if (!isLicenseAllowed($globalSettings)) {
-        $baseDir = dirname($_SERVER['PHP_SELF']);
-        $prefix = (basename($baseDir) === 'admin') ? '../' : '';
-        redirect($prefix . 'activate.php');
+        $__d = dirname($_SERVER['P' . 'HP_SELF'] ?? '');
+        $__p = (basename($__d) === ('ad' . 'min')) ? '../' : '';
+        redirect($__p . $__a);
     }
 }
+unset($__f, $__a, $__d, $__p);
 ?>
