@@ -125,9 +125,13 @@ $admissions = $stmt->fetchAll();
                 <thead>
                     <tr>
                         <th>Tahun Ajaran</th>
-                        <th>Nama Lengkap</th>
-                        <th>Email / No. Telp</th>
+                        <th>Nama</th>
+                        <th>JK</th>
                         <th>Asal Sekolah</th>
+                        <th>Tempat/Tgl Lahir</th>
+                        <th>Orang Tua/Wali</th>
+                        <th>Kontak</th>
+                        <th>PIP</th>
                         <th>Tanggal Daftar</th>
                         <th>Status</th>
                         <th>Aksi</th>
@@ -141,12 +145,35 @@ $admissions = $stmt->fetchAll();
                         </td>
                         <td>
                             <div style="font-weight: 600;"><?php echo $row['full_name']; ?></div>
+                            <?php if (!empty($row['nisn'])): ?>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">NISN: <?php echo $row['nisn']; ?></div>
+                            <?php endif; ?>
+                        </td>
+                        <td><?php echo $row['gender'] ?? '-'; ?></td>
+                        <td>
+                            <?php echo $row['school_origin']; ?>
                         </td>
                         <td>
-                            <div style="font-size: 0.9rem;"><?php echo $row['email']; ?></div>
-                            <div style="font-size: 0.8rem; color: var(--text-muted);"><?php echo $row['phone']; ?></div>
+                            <div style="font-size: 0.9rem;"><?php echo $row['birth_place'] ?? '-'; ?></div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);">
+                                <?php echo !empty($row['birth_date']) ? date('d/m/Y', strtotime($row['birth_date'])) : '-'; ?>
+                            </div>
                         </td>
-                        <td><?php echo $row['school_origin']; ?></td>
+                        <td>
+                            <div style="font-size: 0.9rem; font-weight: 600;"><?php echo $row['parent_name'] ?? '-'; ?></div>
+                        </td>
+                        <td>
+                            <div style="font-size: 0.9rem;"><?php echo $row['phone'] ?? '-'; ?></div>
+                            <?php if (!empty($row['student_phone'])): ?>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">Siswa: <?php echo $row['student_phone']; ?></div>
+                            <?php endif; ?>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);"><?php echo $row['email'] ?? '-'; ?></div>
+                        </td>
+                        <td>
+                            <span class="badge badge-<?php echo !empty($row['has_pip']) ? 'success' : 'warning'; ?>">
+                                <?php echo !empty($row['has_pip']) ? 'Ya' : 'Tidak'; ?>
+                            </span>
+                        </td>
                         <td><?php echo date('d/m/y', strtotime($row['created_at'])); ?></td>
                         <td>
                             <span class="badge badge-<?php echo $row['status'] === 'verified' ? 'success' : 'warning'; ?>">
@@ -164,7 +191,7 @@ $admissions = $stmt->fetchAll();
                     </tr>
                     <?php endforeach; ?>
                     <?php if (empty($admissions)): ?>
-                        <tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 3rem;">Belum ada data pendaftar.</td></tr>
+                        <tr><td colspan="11" style="text-align: center; color: var(--text-muted); padding: 3rem;">Belum ada data pendaftar.</td></tr>
                     <?php endif; ?>
                 </tbody>
             </table>

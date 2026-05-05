@@ -3,7 +3,27 @@ require_once 'db.php';
 if (!isLoggedIn()) redirect('login.php');
 
 // Fetch all data
-$stmt = $pdo->query("SELECT full_name, email, phone, school_origin, status, created_at FROM ms_admission ORDER BY created_at DESC");
+$stmt = $pdo->query("
+    SELECT
+        academic_year,
+        full_name,
+        gender,
+        school_origin,
+        nisn,
+        birth_place,
+        birth_date,
+        religion,
+        address,
+        parent_name,
+        student_phone,
+        phone,
+        email,
+        IF(has_pip = 1, 'Ya', 'Tidak') AS has_pip,
+        status,
+        created_at
+    FROM ms_admission
+    ORDER BY created_at DESC
+");
 $data = $stmt->fetchAll();
 
 // Set Headers for Download
@@ -14,7 +34,24 @@ header('Content-Disposition: attachment; filename=data_pendaftar_ppdb_' . date('
 $output = fopen('php://output', 'w');
 
 // Output the column headings
-fputcsv($output, array('Nama Lengkap', 'Email', 'No. Telp', 'Asal Sekolah', 'Status', 'Tanggal Daftar'));
+fputcsv($output, array(
+    'Tahun Ajaran',
+    'Nama Lengkap',
+    'Jenis Kelamin',
+    'Asal Sekolah (SD/MI)',
+    'NISN',
+    'Tempat Lahir',
+    'Tanggal Lahir',
+    'Agama',
+    'Alamat Lengkap',
+    'Nama Orang Tua/Wali',
+    'Nomor HP Siswa',
+    'Nomor WA Orang Tua/Wali',
+    'Email',
+    'PIP',
+    'Status',
+    'Tanggal Daftar'
+));
 
 // Output the data
 if (count($data) > 0) {
