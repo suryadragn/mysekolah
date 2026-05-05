@@ -124,8 +124,8 @@ $appName = $_ENV['APP_NAME'] ?? 'MySekolah';
                 </div>
                 <div class="form-group">
                     <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Pernyataan Pendaftaran *</label>
-                    <div style="display: flex; gap: 1.5rem; align-items: center;">
-                        <label style="display: inline-flex; gap: 8px; align-items: center; color: var(--text-light);">
+                    <div class="radio-group">
+                        <label class="radio-pill">
                             <input type="radio" name="consent" value="Ya" required <?php echo (($_POST['consent'] ?? '') === 'Ya') ? 'checked' : ''; ?>>
                             Ya, saya menyatakan mendaftar sebagai peserta didik baru.
                         </label>
@@ -190,12 +190,12 @@ $appName = $_ENV['APP_NAME'] ?? 'MySekolah';
                 </div>
                 <div class="form-group">
                     <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Memiliki kartu dan rekening PIP *</label>
-                    <div style="display: flex; gap: 1.5rem; align-items: center;">
-                        <label style="display: inline-flex; gap: 8px; align-items: center; color: var(--text-light);">
+                    <div class="radio-group">
+                        <label class="radio-pill">
                             <input type="radio" name="has_pip" value="Ya" required <?php echo (($_POST['has_pip'] ?? '') === 'Ya') ? 'checked' : ''; ?>>
                             Ya
                         </label>
-                        <label style="display: inline-flex; gap: 8px; align-items: center; color: var(--text-light);">
+                        <label class="radio-pill">
                             <input type="radio" name="has_pip" value="Tidak" required <?php echo (($_POST['has_pip'] ?? '') === 'Tidak') ? 'checked' : ''; ?>>
                             Tidak
                         </label>
