@@ -4,15 +4,15 @@ require_once 'admin/db.php';
 $appName = $_ENV['APP_NAME'] ?? 'MySekolah';
 $trialDays = 14;
 
-$currentDomain = getCurrentDomain();
-$validKey = generateLicenseKeyForDomain($currentDomain);
+$___d = getCurrentDomain();
+$___k = generateLicenseKeyForDomain($___d);
 
 $appStatus = $globalSettings['app_status'] ?? 'inactive';
 $trialStartedAt = $globalSettings['trial_started_at'] ?? '';
 
 // Already fully active
 $appLicenseKey = $globalSettings['app_license_key'] ?? '';
-if ($appStatus === 'active' && $appLicenseKey === $validKey) {
+if ($appStatus === 'active' && $appLicenseKey === $___k) {
     redirect('index.php');
 }
 
@@ -27,7 +27,7 @@ if ($appStatus === 'trial' && !empty($trialStartedAt)) {
 }
 
 $error = '';
-if ($appStatus === 'active' && $appLicenseKey !== $validKey && $appLicenseKey !== '') {
+if ($appStatus === 'active' && $appLicenseKey !== $___k && $appLicenseKey !== '') {
     $error = "Sistem mendeteksi License Key tidak valid untuk domain ini. Silakan masukkan key yang benar.";
 }
 
@@ -35,12 +35,12 @@ if ($appStatus === 'active' && $appLicenseKey !== $validKey && $appLicenseKey !=
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['activate'])) {
     $inputKey = strtoupper(trim($_POST['license_key'] ?? ''));
 
-    if ($inputKey !== '' && hash_equals($validKey, $inputKey)) {
+    if ($inputKey !== '' && hash_equals($___k, $inputKey)) {
         $pdo->exec("UPDATE ms_settings SET s_value = 'active' WHERE s_key = 'app_status'");
         $pdo->prepare("UPDATE ms_settings SET s_value = ? WHERE s_key = 'app_license_key'")->execute([$inputKey]);
         redirect('index.php');
     } else {
-        $error = "License key tidak valid untuk domain <strong>{$currentDomain}</strong>. Pastikan Anda meminta key ke author sesuai domain Anda.";
+        $error = "License key tidak valid untuk domain <strong>{$___d}</strong>. Pastikan Anda meminta key ke author sesuai domain Anda.";
     }
 }
 

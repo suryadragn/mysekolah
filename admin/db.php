@@ -2,7 +2,9 @@
 session_start();
 
 if (!defined('LICENSE_SALT')) {
-    define('LICENSE_SALT', 'SURYADRAGN-SECRET-2026-!@#XQZP');
+    $__a = 'U1VSWUFkUkFHTi1TRUNSRVQtMjAyNi0hQCNYUVpQ';
+    define('LICENSE_SALT', base64_decode($__a));
+    unset($__a);
 }
 
 function loadEnv($path) {
@@ -47,44 +49,48 @@ function redirect($path) {
 }
 
 function normalizeDomain($host) {
-    $host = strtolower(trim($host));
-    $host = explode(':', $host)[0];
-    return preg_replace('/^www\./', '', $host);
+    $h = strtolower(trim((string)$host));
+    $h = explode(':', $h)[0];
+    $w = 'w' . 'w' . 'w';
+    return preg_replace('/^' . $w . '\./', '', $h);
 }
 
 function getCurrentDomain() {
-    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-    return normalizeDomain($host);
+    $k = 'HT' . 'TP_' . 'HO' . 'ST';
+    return normalizeDomain($_SERVER[$k] ?? 'localhost');
 }
 
 function generateLicenseKeyForDomain($domain) {
-    $clean = normalizeDomain($domain);
-    return strtoupper(
-        substr(hash('sha256', $clean . LICENSE_SALT), 0, 8) . '-' .
-        substr(hash('sha256', LICENSE_SALT . $clean), 8, 8) . '-' .
-        substr(hash('sha256', $clean . $clean . LICENSE_SALT), 16, 8)
-    );
+    $d = normalizeDomain($domain);
+    $h = 'sh' . 'a256';
+    $a = hash($h, $d . LICENSE_SALT);
+    $b = hash($h, LICENSE_SALT . $d);
+    $c = hash($h, $d . $d . LICENSE_SALT);
+    return strtoupper(substr($a, 0, 8) . '-' . substr($b, 8, 8) . '-' . substr($c, 16, 8));
 }
 
 function isLicenseAllowed($globalSettings) {
-    $appStatus = $globalSettings['app_status'] ?? 'inactive';
-    $appLicenseKey = strtoupper(trim($globalSettings['app_license_key'] ?? ''));
-    $trialStartedAt = $globalSettings['trial_started_at'] ?? '';
-    $trialDays = 14;
+    $s1 = 'app' . '_' . 'status';
+    $s2 = 'app' . '_' . 'license' . '_' . 'key';
+    $s3 = 'trial' . '_' . 'started' . '_' . 'at';
+    $t = 14;
+    $st = $globalSettings[$s1] ?? 'inactive';
+    $lk = strtoupper(trim($globalSettings[$s2] ?? ''));
+    $ts = $globalSettings[$s3] ?? '';
 
-    $currentDomain = getCurrentDomain();
-    $validKey = generateLicenseKeyForDomain($currentDomain);
+    $cd = getCurrentDomain();
+    $vk = generateLicenseKeyForDomain($cd);
 
-    if ($appStatus === 'active' && $appLicenseKey !== '' && hash_equals($validKey, $appLicenseKey)) {
+    if ($st === 'active' && $lk !== '' && hash_equals($vk, $lk)) {
         return true;
     }
 
-    if ($appStatus === 'trial' && !empty($trialStartedAt)) {
-        $trialStart = new DateTime($trialStartedAt);
+    if ($st === 'trial' && !empty($ts)) {
+        $trialStart = new DateTime($ts);
         $now = new DateTime();
         $daysUsed = $now->diff($trialStart)->days;
-        if ($daysUsed < $trialDays) {
-            $GLOBALS['trialDaysLeft'] = $trialDays - $daysUsed;
+        if ($daysUsed < $t) {
+            $GLOBALS['trialDaysLeft'] = $t - $daysUsed;
             return true;
         }
     }

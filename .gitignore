@@ -2,6 +2,10 @@
 keygen.php
 keygen.php.backup
 keygen.php.bak
+activate.php.backup
+admin/db.php.backup
+activate.php.bak
+admin/db.php.bak
 database_structure.sql
 /uploads/*
 !/uploads/.gitkeep
