@@ -193,7 +193,7 @@ if ($appStatus === 'trial' && !empty($trialStartedAt)) {
         <p style="color: var(--text-muted); margin-bottom: 0.75rem; font-size: 0.95rem;">
             Aplikasi ini dilindungi lisensi oleh <strong>suryadragn</strong>.
         </p>
-        <div class="domain-chip">🌐 <?php echo $currentDomain; ?></div>
+        <div class="domain-chip">🌐 <?php echo $___d; ?></div>
 
         <?php if ($error): ?>
             <div class="error-msg"><?php echo $error; ?></div>
