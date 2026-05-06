@@ -33,6 +33,7 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $appName; ?> | Portal Modern</title>
     <link rel="stylesheet" href="assets/css/style.css?v=<?php echo time(); ?>">
+    <?php echo $themeCss ?? ''; ?>
     <meta name="description" content="Portal modern MySekolah dengan desain premium dan fitur lengkap.">
     <?php if(!empty($settings['site_favicon'])): ?>
     <link rel="icon" href="uploads/<?php echo $settings['site_favicon']; ?>">

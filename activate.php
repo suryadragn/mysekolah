@@ -64,6 +64,7 @@ if ($appStatus === 'trial' && !empty($trialStartedAt)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aktivasi Aplikasi | <?php echo $appName; ?></title>
     <link rel="stylesheet" href="assets/css/style.css?v=<?php echo time(); ?>">
+    <?php echo $themeCss ?? ''; ?>
     <style>
         body {
             display: flex;

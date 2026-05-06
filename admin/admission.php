@@ -45,6 +45,7 @@ $admissions = $stmt->fetchAll();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Data PPDB | <?php echo $appName; ?></title>
     <link rel="stylesheet" href="../assets/css/style.css?v=<?php echo time(); ?>">
+    <?php echo $themeCss ?? ''; ?>
     <style>
         .filter-card {
             background: var(--glass);

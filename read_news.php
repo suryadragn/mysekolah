@@ -19,6 +19,7 @@ $appName = $_ENV['APP_NAME'] ?? 'MySekolah';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $news['title']; ?> | <?php echo $appName; ?></title>
     <link rel="stylesheet" href="assets/css/style.css">
+    <?php echo $themeCss ?? ''; ?>
     <?php if(!empty($globalSettings['site_favicon'])): ?>
     <link rel="icon" href="uploads/<?php echo $globalSettings['site_favicon']; ?>">
     <?php endif; ?>

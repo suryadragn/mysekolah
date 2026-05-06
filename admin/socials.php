@@ -53,6 +53,7 @@ $socials = $pdo->query("SELECT * FROM ms_socials ORDER BY id ASC")->fetchAll();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kelola Sosial Media | <?php echo $appName; ?></title>
     <link rel="stylesheet" href="../assets/css/style.css?v=<?php echo time(); ?>">
+    <?php echo $themeCss ?? ''; ?>
     <style>
         .icon-preview { width: 40px; height: 40px; background: var(--glass); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 1px solid var(--glass-border); }
     </style>

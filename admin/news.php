@@ -22,6 +22,7 @@ $news = $pdo->query("SELECT * FROM ms_news ORDER BY created_at DESC")->fetchAll(
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kelola Berita | <?php echo $appName; ?></title>
     <link rel="stylesheet" href="../assets/css/style.css?v=<?php echo time(); ?>">
+    <?php echo $themeCss ?? ''; ?>
     <style>
         .table-container { background: var(--glass); border-radius: 20px; border: 1px solid var(--glass-border); overflow-x: auto; margin-top: 2rem; }
         table { width: 100%; border-collapse: collapse; text-align: left; }

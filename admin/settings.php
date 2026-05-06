@@ -55,6 +55,7 @@ foreach ($settings_raw as $s) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pengaturan Umum | <?php echo $appName; ?></title>
     <link rel="stylesheet" href="../assets/css/style.css?v=<?php echo time(); ?>">
+    <?php echo $themeCss ?? ''; ?>
 </head>
 <body class="admin-body">
     <div class="mobile-admin-header">
@@ -115,6 +116,35 @@ foreach ($settings_raw as $s) {
                                 <input type="text" name="settings[stat_extracurriculars]" value="<?php echo htmlspecialchars($settings['stat_extracurriculars'] ?? ''); ?>" placeholder="15">
                             </div>
                         </div>
+                    </div>
+
+                    <div class="form-card">
+                        <h3 style="margin-bottom: 2rem; color: var(--secondary); display: flex; align-items: center; gap: 10px;">
+                            <span>🎛️</span> Warna Tema
+                        </h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label>Primary</label>
+                                <input type="color" name="settings[theme_primary]" value="<?php echo htmlspecialchars($settings['theme_primary'] ?? '#6366f1'); ?>" style="height: 52px; padding: 0.6rem;">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label>Primary Dark</label>
+                                <input type="color" name="settings[theme_primary_dark]" value="<?php echo htmlspecialchars($settings['theme_primary_dark'] ?? '#4f46e5'); ?>" style="height: 52px; padding: 0.6rem;">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label>Secondary</label>
+                                <input type="color" name="settings[theme_secondary]" value="<?php echo htmlspecialchars($settings['theme_secondary'] ?? '#06b6d4'); ?>" style="height: 52px; padding: 0.6rem;">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label>Accent</label>
+                                <input type="color" name="settings[theme_accent]" value="<?php echo htmlspecialchars($settings['theme_accent'] ?? '#f43f5e'); ?>" style="height: 52px; padding: 0.6rem;">
+                            </div>
+                            <div class="form-group" style="grid-column: 1 / -1; margin-bottom: 0;">
+                                <label>Background</label>
+                                <input type="color" name="settings[theme_bg_dark]" value="<?php echo htmlspecialchars($settings['theme_bg_dark'] ?? '#0f172a'); ?>" style="height: 52px; padding: 0.6rem;">
+                            </div>
+                        </div>
+                        <small style="color: var(--text-muted); display: block; margin-top: 1rem;">Perubahan berlaku setelah disimpan dan refresh halaman.</small>
                     </div>
                 </div>
 

@@ -19,6 +19,7 @@ $recentAdmissions = $pdo->query("SELECT * FROM ms_admission ORDER BY created_at 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard | <?php echo $appName; ?></title>
     <link rel="stylesheet" href="../assets/css/style.css?v=<?php echo time(); ?>">
+    <?php echo $themeCss ?? ''; ?>
     <style>
         .dashboard-header {
             display: flex;
@@ -199,4 +200,3 @@ $recentAdmissions = $pdo->query("SELECT * FROM ms_admission ORDER BY created_at 
     </script>
 </body>
 </html>
-

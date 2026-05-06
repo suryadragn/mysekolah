@@ -98,6 +98,13 @@ function isLicenseAllowed($globalSettings) {
     return false;
 }
 
+function sanitizeHexColor($value, $fallback) {
+    $v = trim((string)$value);
+    if ($v === '') return $fallback;
+    if (preg_match('/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/', $v)) return strtolower($v);
+    return $fallback;
+}
+
 // Fetch global settings
 $globalSettings = [];
 try {
@@ -110,6 +117,14 @@ try {
 } catch (PDOException $e) {
     // Ignore if table doesn't exist yet
 }
+
+$themePrimary = sanitizeHexColor($globalSettings['theme_primary'] ?? '', '#6366f1');
+$themePrimaryDark = sanitizeHexColor($globalSettings['theme_primary_dark'] ?? '', '#4f46e5');
+$themeSecondary = sanitizeHexColor($globalSettings['theme_secondary'] ?? '', '#06b6d4');
+$themeAccent = sanitizeHexColor($globalSettings['theme_accent'] ?? '', '#f43f5e');
+$themeBg = sanitizeHexColor($globalSettings['theme_bg_dark'] ?? '', '#0f172a');
+
+$themeCss = '<style>:root{--primary:' . $themePrimary . ';--primary-dark:' . $themePrimaryDark . ';--secondary:' . $themeSecondary . ';--accent:' . $themeAccent . ';--bg-dark:' . $themeBg . ';}</style>';
 
 $__f = basename($_SERVER['P' . 'HP_SELF'] ?? '');
 $__a = 'act' . 'ivate' . '.php';

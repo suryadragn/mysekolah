@@ -27,6 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | MySekolah Admin</title>
     <link rel="stylesheet" href="../assets/css/style.css">
+    <?php echo $themeCss ?? ''; ?>
     <style>
         body {
             height: 100vh;

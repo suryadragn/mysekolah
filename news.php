@@ -14,6 +14,7 @@ $news = $pdo->query("SELECT * FROM ms_news ORDER BY created_at DESC")->fetchAll(
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Berita & Artikel | <?php echo $appName; ?></title>
     <link rel="stylesheet" href="assets/css/style.css">
+    <?php echo $themeCss ?? ''; ?>
     <?php if(!empty($globalSettings['site_favicon'])): ?>
     <link rel="icon" href="uploads/<?php echo $globalSettings['site_favicon']; ?>">
     <?php endif; ?>
